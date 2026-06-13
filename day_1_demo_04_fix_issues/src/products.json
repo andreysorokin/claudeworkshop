@@ -1,0 +1,26 @@
+[
+  {
+    "id": "APPL001",
+    "name": "Granny Smith Apples",
+    "price": 3.99,
+    "quantity": 12
+  },
+  {
+    "id": "MILK001",
+    "name": "2% Milk",
+    "price": 4.25,
+    "quantity": 4
+  },
+  {
+    "id": "BRDS001",
+    "name": "Whole Wheat Bread",
+    "price": 2.49,
+    "quantity": 3
+  },
+  {
+    "id": "CHKN001",
+    "name": "Chicken Breast",
+    "price": 8.50,
+    "quantity": 2
+  }
+]

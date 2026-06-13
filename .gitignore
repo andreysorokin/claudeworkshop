@@ -1,0 +1,42 @@
+# macOS
+.DS_Store
+._*
+
+# Node.js / TypeScript
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+*.js.map
+
+# Environment
+.env
+
+# Test / coverage output
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Vite
+.vite/
+
+# .NET / C#
+bin/
+obj/
+*.user
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+npm-debug.log*

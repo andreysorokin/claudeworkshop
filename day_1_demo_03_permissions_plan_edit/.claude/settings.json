@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "Write(docs/official/**)",
+      "Edit(docs/official/**)",
+      "Read(.env)"
+    ]
+  },
+ "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx tsx .claude/hooks/no-regrets.ts"
+          }
+        ]
+      }
+    ]
+  }
+}

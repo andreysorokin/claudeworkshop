@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Write(/reports/metrics.json)",
+      "Write(/reports/metrics-data.md)",
+      "Edit(/reports/metrics.json)",
+      "Edit(/reports/metrics-data.md)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash validate.sh 2>&1"
+          }
+        ]
+      }
+    ]
+  }
+}
