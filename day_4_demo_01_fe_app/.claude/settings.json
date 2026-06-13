@@ -1,0 +1,92 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(frontend/dist/**)",
+      "Write(frontend/dist/**)",
+      "Edit(backend/dist/**)",
+      "Write(backend/dist/**)",
+      "Edit(**/.env)",
+      "Write(**/.env)",
+      "Edit(**/.env.local)",
+      "Write(**/.env.local)",
+      "Edit(**/node_modules/**)",
+      "Write(**/node_modules/**)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit(frontend/src/.*\\.(ts|tsx))",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npm run lint 2>&1 | tail -25 || true"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(frontend/src/.*\\.(ts|tsx))",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npm run lint 2>&1 | tail -25 || true"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit(frontend/src/.*\\.test\\.(ts|tsx))",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npm test 2>&1 | tail -25"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(frontend/src/.*\\.test\\.(ts|tsx))",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npm test 2>&1 | tail -25"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit(backend/src/.*\\.ts)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd backend && npx tsc --noEmit 2>&1 | tail -10 || true"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(backend/src/.*\\.ts)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd backend && npx tsc --noEmit 2>&1 | tail -10 || true"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit(backend/tests/.*\\.ts)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd backend && npm test 2>&1 | tail -25"
+          }
+        ]
+      },
+      {
+        "matcher": "Write(backend/tests/.*\\.ts)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd backend && npm test 2>&1 | tail -25"
+          }
+        ]
+      }
+    ]
+  }
+}

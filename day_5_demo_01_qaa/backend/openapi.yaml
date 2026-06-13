@@ -1,0 +1,418 @@
+openapi: 3.0.3
+info:
+  title: Community Hub API
+  version: 1.0.0
+  description: REST API for the Community Hub staff portal
+
+servers:
+  - url: http://localhost:3001
+    description: Local development
+
+tags:
+  - name: events
+    description: Charity events management
+  - name: volunteers
+    description: Volunteer management
+  - name: stats
+    description: Portal statistics
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Returns 200 when the service is running
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /api/stats:
+    get:
+      summary: Get portal statistics
+      tags: [stats]
+      description: Returns aggregate counts across all active events and volunteers
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+
+  /api/events:
+    get:
+      summary: List active events
+      tags: [events]
+      description: "Returns all events with isActive=true. Optionally filter by category."
+      parameters:
+        - name: category
+          in: query
+          required: false
+          description: Filter events by category
+          schema:
+            $ref: '#/components/schemas/EventCategory'
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+
+    post:
+      summary: Create a new event
+      tags: [events]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '201':
+          description: Event created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/events/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Numeric event ID
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Get a single event
+      tags: [events]
+      responses:
+        '200':
+          description: Event found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update an event
+      tags: [events]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEventRequest'
+      responses:
+        '200':
+          description: Event updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Soft-delete an event
+      tags: [events]
+      description: "Sets isActive to false. The event no longer appears in GET /api/events."
+      responses:
+        '204':
+          description: Event deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/volunteers/roles:
+    get:
+      summary: List available volunteer roles
+      tags: [volunteers]
+      description: Returns the fixed list of roles a volunteer can be assigned
+      responses:
+        '200':
+          description: List of role strings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: [Coordinator, Support, Driver, Medic, Photographer]
+
+  /api/volunteers:
+    get:
+      summary: List active volunteers
+      tags: [volunteers]
+      description: Returns all volunteers with isActive=true
+      responses:
+        '200':
+          description: List of volunteers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Volunteer'
+
+    post:
+      summary: Register a new volunteer
+      tags: [volunteers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVolunteerRequest'
+      responses:
+        '201':
+          description: Volunteer registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volunteer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/volunteers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Numeric volunteer ID
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Get a single volunteer
+      tags: [volunteers]
+      responses:
+        '200':
+          description: Volunteer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volunteer'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update a volunteer
+      tags: [volunteers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVolunteerRequest'
+      responses:
+        '200':
+          description: Volunteer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volunteer'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Soft-delete a volunteer
+      tags: [volunteers]
+      description: "Sets isActive to false. The volunteer no longer appears in GET /api/volunteers."
+      responses:
+        '204':
+          description: Volunteer deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    EventCategory:
+      type: string
+      enum: [fundraising, awareness, community, training]
+      description: Category of a charity event
+
+    Event:
+      type: object
+      required: [id, title, date, location, category, description, spotsTotal, spotsRegistered, isActive]
+      properties:
+        id:
+          type: integer
+          description: Auto-assigned identifier
+        title:
+          type: string
+        date:
+          type: string
+          format: date
+          description: ISO 8601 date (YYYY-MM-DD)
+        location:
+          type: string
+          description: Venue name or URL for online events
+        category:
+          $ref: '#/components/schemas/EventCategory'
+        description:
+          type: string
+        spotsTotal:
+          type: integer
+          minimum: 1
+          description: Total capacity
+        spotsRegistered:
+          type: integer
+          minimum: 0
+          description: Number of registrations so far
+        isActive:
+          type: boolean
+          description: false when soft-deleted
+
+    CreateEventRequest:
+      type: object
+      required: [title, date, location, category, description, spotsTotal]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          format: date
+        location:
+          type: string
+          minLength: 1
+        category:
+          $ref: '#/components/schemas/EventCategory'
+        description:
+          type: string
+          minLength: 1
+        spotsTotal:
+          type: integer
+          minimum: 1
+
+    UpdateEventRequest:
+      type: object
+      description: All fields optional; only provided fields are updated
+      properties:
+        title:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          format: date
+        location:
+          type: string
+        category:
+          $ref: '#/components/schemas/EventCategory'
+        description:
+          type: string
+        spotsTotal:
+          type: integer
+          minimum: 1
+
+    Volunteer:
+      type: object
+      required: [id, name, email, role, joinedAt, isActive, eventsCount]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          description: One of the values from GET /api/volunteers/roles
+        joinedAt:
+          type: string
+          format: date
+        isActive:
+          type: boolean
+        eventsCount:
+          type: integer
+          minimum: 0
+
+    CreateVolunteerRequest:
+      type: object
+      required: [name, email, role]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          description: Must match one of the values from GET /api/volunteers/roles
+          enum: [Coordinator, Support, Driver, Medic, Photographer]
+
+    UpdateVolunteerRequest:
+      type: object
+      description: All fields optional
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+
+    Stats:
+      type: object
+      required: [totalEvents, totalVolunteers, openSpots, filledSpots]
+      properties:
+        totalEvents:
+          type: integer
+          description: Count of active events
+        totalVolunteers:
+          type: integer
+          description: Count of active volunteers
+        openSpots:
+          type: integer
+          description: Total unfilled spots across all active events
+        filledSpots:
+          type: integer
+          description: Total filled spots across all active events
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Validation error - request body failed schema validation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: All fields are required
+    NotFound:
+      description: Resource not found or has been soft-deleted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Event not found

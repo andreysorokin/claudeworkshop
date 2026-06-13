@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Test Fundraiser",
+    "date": "2025-07-01",
+    "location": "Test Venue, London",
+    "category": "fundraising",
+    "description": "A test fundraising event for automated testing.",
+    "spotsTotal": 50
+  },
+  {
+    "title": "Awareness Campaign",
+    "date": "2025-07-15",
+    "location": "Online — Zoom",
+    "category": "awareness",
+    "description": "An online awareness campaign.",
+    "spotsTotal": 100
+  },
+  {
+    "title": "Community Workshop",
+    "date": "2025-08-01",
+    "location": "Community Centre, Manchester",
+    "category": "community",
+    "description": "A community workshop for local residents.",
+    "spotsTotal": 25
+  }
+]
