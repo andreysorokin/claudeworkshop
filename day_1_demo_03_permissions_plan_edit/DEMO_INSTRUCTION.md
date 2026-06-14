@@ -35,16 +35,16 @@ Five things at once, in one short session:
 
 ## File Map — What Claude Can and Cannot Do
 
-| File                                 | Read   | Edit / Write | Why                                                          |
-| ------------------------------------ | ------ | ------------ | ------------------------------------------------------------ |
-| `CLAUDE.md`                          | Yes    | Yes          | No restriction                                               |
-| `DEMO_INSTRUCTION.md`                | Yes    | Yes          | No restriction                                               |
-| `docs/draft/project_plan.md`         | Yes    | **Yes**      | Allowed — this is the working copy                           |
-| `docs/official/project_plan.md`      | Yes    | **No**       | Write/Edit denied by `.claude/settings.json`                 |
-| `.env`                               | **No** | **No**       | Read denied — Claude cannot see secrets at all               |
-| `.claude/settings.json`              | Yes    | Yes*         | *No deny rule on itself — worth discussing                   |
-| `.claude/hooks/docs-draft-only.ts`   | Yes    | Yes          | Pre-hook — enforces Markdown creation location               |
-| `.claude/hooks/enforce-structure.ts` | Yes    | Yes          | Post-hook — enforces `##` header structure in `docs/draft/`  |
+| File                                 | Read   | Edit / Write | Why                                                         |
+| ------------------------------------ | ------ | ------------ | ----------------------------------------------------------- |
+| `CLAUDE.md`                          | Yes    | Yes          | No restriction                                              |
+| `DEMO_INSTRUCTION.md`                | Yes    | Yes          | No restriction                                              |
+| `docs/draft/project_plan.md`         | Yes    | **Yes**      | Allowed — this is the working copy                          |
+| `docs/official/project_plan.md`      | Yes    | **No**       | Write/Edit denied by `.claude/settings.json`                |
+| `.env`                               | **No** | **No**       | Read denied — Claude cannot see secrets at all              |
+| `.claude/settings.json`              | Yes    | Yes*         | *No deny rule on itself — worth discussing                  |
+| `.claude/hooks/docs-draft-only.ts`   | Yes    | Yes          | Pre-hook — enforces Markdown creation location              |
+| `.claude/hooks/enforce-structure.ts` | Yes    | Yes          | Post-hook — enforces `##` header structure in `docs/draft/` |
 
 > **Key point:** `docs/official/` is write-protected but still readable. `.env` is read-protected — Claude cannot see the contents at all, so secrets never enter the context window.
 
@@ -191,6 +191,19 @@ Open the diff and walk through it with participants:
 - When would you always use Plan mode? (Changes touching many files, anything irreversible)
 - When is Edit mode fine without a plan? (Single-file changes, bug fixes with a failing test as a guardrail)
 - What is the escape hatch if a plan looks wrong? (Reject it, refine the prompt, plan again)
+
+---
+
+## Security Gaps & How to Close Them
+
+**1. Hijacking `docs/official/` via Bash**  
+`Write`/`Edit` deny rules don't cover the `Bash` tool. `cp`, redirects, and `sed -i` can still overwrite protected files. Fix: add `"Bash(*docs/official*)"` to the deny list.
+
+**2. Protecting `settings.json`**  
+Claude can edit `.claude/settings.json` to remove its own deny rules. Add `"Edit(.claude/settings.json)"` and `"Write(.claude/settings.json)"` to the deny list — ideally in the global `~/.claude/settings.json` so the project file can't undo it.
+
+**3. Restricting Bash by substring**  
+Add `"Bash(*docs/official*)"` to the `deny` array to block any shell command that references that path.
 
 ---
 
