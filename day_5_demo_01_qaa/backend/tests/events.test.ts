@@ -13,10 +13,10 @@ describe('GET /api/events', () => {
   })
 
   it('filters events by category', async () => {
-    const res = await request(app).get('/api/events?category=training')
+    const res = await request(app).get('/api/events?category=clinic')
     expect(res.status).toBe(200)
     const categories: string[] = res.body.map((e: { category: string }) => e.category)
-    expect(categories.every(c => c === 'training')).toBe(true)
+    expect(categories.every(c => c === 'clinic')).toBe(true)
   })
 })
 
@@ -27,7 +27,7 @@ describe('GET /api/events/:id', () => {
     const res = await request(app).get('/api/events/1')
     expect(res.status).toBe(200)
     expect(res.body.id).toBe(1)
-    expect(res.body.title).toBe('Winter Fundraising Gala')
+    expect(res.body.title).toBe('Moonlit Midnight Ride')
   })
 })
 

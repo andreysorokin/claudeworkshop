@@ -9,24 +9,24 @@ vi.mock('../../hooks/useEvents')
 const mockEvents: Event[] = [
   {
     id: 1,
-    title: 'Winter Fundraising Gala',
+    title: 'Moonlit Midnight Ride',
     date: '2025-02-15',
-    location: 'The Grand Ballroom, London',
-    category: 'fundraising',
+    location: 'Enchanted Stables, North Paddock',
+    category: 'trail',
     description: '',
-    spotsTotal: 200,
-    spotsRegistered: 145,
+    spotsTotal: 12,
+    spotsRegistered: 9,
     isActive: true,
   },
   {
     id: 2,
-    title: 'Community Blood Donation Drive',
+    title: 'Spring Foal Showcase',
     date: '2025-03-08',
-    location: 'City Community Centre, Manchester',
-    category: 'awareness',
+    location: 'Main Arena, Enchanted Stables',
+    category: 'show',
     description: '',
-    spotsTotal: 50,
-    spotsRegistered: 38,
+    spotsTotal: 80,
+    spotsRegistered: 55,
     isActive: true,
   },
 ]
@@ -49,7 +49,7 @@ describe('EventList', () => {
       error: null,
     })
     render(<EventList />)
-    expect(screen.getByText('Winter Fundraising Gala')).toBeInTheDocument()
-    expect(screen.getByText('Community Blood Donation Drive')).toBeInTheDocument()
+    expect(screen.getByText('Moonlit Midnight Ride')).toBeInTheDocument()
+    expect(screen.getByText('Spring Foal Showcase')).toBeInTheDocument()
   })
 })

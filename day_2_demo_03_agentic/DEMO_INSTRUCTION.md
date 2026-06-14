@@ -2,119 +2,106 @@
 
 ---
 
-## Setup (before the session)
+## Setup
 
 ```bash
 cd day_2_demo_03_agentic
-# No npm install needed — no Node.js dependencies
-# Ensure reports/ is empty
+# No npm install needed
 rm -f reports/metrics.json reports/metrics-data.md
 ```
 
 ---
 
-## Use Case
+## The Story
 
-The engineering team wants automated code quality reporting with no human in the loop. Every night a CI job should scan the codebase, produce a structured report, and fail loudly if the output is malformed — all without anyone opening a Claude session.
+The Enchanted Stables engineering team wants nightly code quality reports — no human in the loop, no open sessions. A CI job scans the codebase, writes a structured report, and fails loudly if anything is malformed.
 
-The agentic pipeline models exactly this:
+This demo is that pipeline.
 
-- **`analyst` agent** reads source files and writes structured JSON — one clear responsibility
-- **`formatter` agent** turns that JSON into a human-readable report — another clear responsibility
-- **PostToolUse hook** validates every file write — bad output is caught immediately and the agent retries
-- **`claude -p`** runs the whole chain headlessly — same pipeline, no interactive session, composable with any scheduler or CI system
+- **`analyst` agent** — reads `src/`, writes structured JSON
+- **`formatter` agent** — turns that JSON into a markdown report
+- **PostToolUse hook** — validates every write; bad output fails fast
+- **`claude -p`** — runs the whole thing headlessly
 
 ---
 
 ## Teaching Points
 
-1. **Sub-agents decompose large tasks** — each agent has a single responsibility
-2. **PostToolUse hooks validate every output** — no bad intermediate files propagate
-3. **Agents read each other's outputs** via shared files (or could use tools/resources)
-4. **Headless `-p`** — same pipeline, no interactive session needed
+1. **Each agent has one job** — scope prevents accidents; composition enables complexity
+2. **Hooks validate every output** — bad files don't propagate downstream
+3. **`-p` + `--dangerously-skip-permissions`** — the CI pattern; no prompts, exit code as signal
 
 ---
 
-## Walkthrough Script
+## Walkthrough
 
 ### Step 1 — Show the architecture (3 min)
 
-Open `.claude/agents/` and walk through the two agent definition files:
-- `analyst.md` — scoped to reading and counting; outputs structured JSON
-- `formatter.md` — scoped to writing; takes JSON and produces markdown
-
-> "Each agent only knows what it needs to know. The orchestrator coordinates them."
+Open `.claude/agents/` — two files, two clear responsibilities:
+- `analyst.md` — reads and counts; outputs JSON only
+- `formatter.md` — writes markdown only
 
 Show `validate.sh`:
-> "This runs after every file write — if the output is malformed, the agent sees the error and retries."
+
+> "Fires after every Write. Bad JSON or missing sections? Agent sees the error and retries."
 
 ### Step 2 — Run the pipeline (15 min)
 
-Ask Claude:
-> "Generate the code quality report for the src/ directory using the analyst and formatter agents."
+> 💬 Ask: "Generate the code quality report for src/ using the analyst and formatter agents."
 
-Watch Claude:
-1. Spawn `analyst` to analyse `src/`
-2. Analyst writes `reports/metrics.json`
-3. Hook fires — validate.sh checks the JSON — passes
-4. Spawn `formatter` with the metrics
-5. Formatter writes `reports/metrics-data.md`
-6. Hook fires — validate.sh checks the report structure — passes
+Watch:
+1. `analyst` spawns → scans `src/` → writes `reports/metrics.json`
+2. Hook fires → validate.sh passes
+3. `formatter` spawns → reads the JSON → writes `reports/metrics-data.md`
+4. Hook fires → passes
 
-Open `reports/metrics-data.md` when done and show the result to the audience.
+Open `reports/metrics-data.md` and show it.
 
-### Step 3 — Simulate a validation failure (5 min)
+### Step 3 — Simulate a failure (5 min)
 
-Corrupt the expected format: open `formatter.md` and temporarily remove `## Metrics` from the required sections list. Re-run. Show the hook failing and the formatter correcting itself.
+Temporarily remove `## Metrics` from the required sections in `formatter.md`. Re-run. Show the hook fail — the formatter sees the error and corrects itself.
 
-Restore `formatter.md` when done.
+Restore `formatter.md`.
 
 ### Step 4 — Headless execution (5 min)
 
-Two layers of permission control work together here:
+Two permission layers:
+- **`settings.json`** pre-approves `Write(reports/*)` for interactive sessions
+- **`--dangerously-skip-permissions`** bypasses all remaining checks for CI
 
-- **`settings.json`** pre-approves `Write(reports/*)` — scopes write access to the output directory only, used in interactive sessions to reduce prompts
-- **`--dangerously-skip-permissions`** bypasses all remaining permission checks — required for fully unattended `-p` runs where there is no user to approve anything
-
-The `-p` flag prints output and exits. Pass `--dangerously-skip-permissions` for sub-agents to write files without any prompt.
-
-**Option A — full pipeline** (analyst scans src/, then formatter produces the report):
+**Full pipeline:**
 
 ```bash
-cd day_2_demo_03_agentic
 rm -f reports/metrics.json reports/metrics-data.md
 
-claude --dangerously-skip-permissions -p "Use the analyst agent to analyse src/ and write reports/metrics.json, then use the formatter agent to turn that into reports/metrics-data.md"
+claude --dangerously-skip-permissions -p \
+  "Use the analyst agent to analyse src/ and write reports/metrics.json, \
+   then use the formatter agent to produce reports/metrics-data.md"
 ```
 
-**Option B — formatter only** (metrics.json already exists, just reformat):
+**Formatter only** (metrics.json already exists):
 
 ```bash
-claude --dangerously-skip-permissions -p "Use the formatter agent to read reports/metrics.json and produce reports/metrics-data.md"
+claude --dangerously-skip-permissions -p \
+  "Use the formatter agent to read reports/metrics.json and produce reports/metrics-data.md"
 ```
 
-**Check the exit code** (0 = success, non-zero = something failed — useful as a CI gate):
+Check the exit code:
 
 ```bash
-echo $?
+echo $?   # 0 = success; non-zero = CI gate fails
 ```
 
-**Capture output** for logging:
+> "The flag name is intentionally loud. It signals you've taken responsibility for what the prompt does — appropriate when you own the code and the environment."
 
-```bash
-claude --dangerously-skip-permissions -p "Use the analyst agent to analyse src/ and write reports/metrics.json, then use the formatter agent to turn that into reports/metrics-data.md" > run.log 2>&1
-```
+### Step 5 — Scale the pattern (5 min)
 
-> "`--dangerously-skip-permissions` is what CI usage looks like. No GUI, no prompts. The agents are loaded from `.claude/agents/`, the hook still fires on every write, and the exit code tells your pipeline whether to proceed. The flag name is intentionally loud — it signals that you've taken responsibility for what the prompt does, which is appropriate when you own the code and the environment."
-
-### Step 5 — Team / multi-step patterns (5 min)
-
-> "The same pattern scales:
-> - 10 analyst agents running on 10 modules in parallel
+> "Same pattern, bigger team:
+> - 10 analyst agents on 10 modules in parallel
 > - A test-writer agent that reads the report and generates tests for low-coverage files
-> - A PR-description agent that summarises all the output at the end"
+> - A PR-description agent that summarises everything at the end"
 
-Show the hooks config in `.claude/settings.json` — one hook, catches everything.
+Show `.claude/settings.json` — one hook, catches every write.
 
 ---
 
@@ -125,6 +112,6 @@ Show the hooks config in `.claude/settings.json` — one hook, catches everythin
 .claude/agents/formatter.md   — sub-agent: formats metrics.json → metrics-data.md
 .claude/settings.json         — PostToolUse hook: runs validate.sh after Write
 validate.sh                   — validates output file structure
-src/                          — sample codebase to analyse
+src/                          — codebase to analyse (Enchanted Stables supply shop)
 reports/                      — output directory (empty at start)
 ```

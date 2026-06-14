@@ -13,10 +13,10 @@ describe('GET /api/events', () => {
   })
 
   it('filters events by category', async () => {
-    const res = await request(app).get('/api/events?category=training')
+    const res = await request(app).get('/api/events?category=clinic')
     expect(res.status).toBe(200)
     const categories: string[] = res.body.map((e: { category: string }) => e.category)
-    expect(categories.every(c => c === 'training')).toBe(true)
+    expect(categories.every(c => c === 'clinic')).toBe(true)
   })
 })
 
@@ -40,15 +40,15 @@ describe('POST /api/events', () => {
 
   it('creates an event', async () => {
     const payload = {
-      title: 'Test Event',
-      date: '2025-06-01',
-      location: 'Test Venue',
-      category: 'community',
-      description: 'A new community gathering.',
-      spotsTotal: 30,
+      title: 'Autumn Hack',
+      date: '2025-09-01',
+      location: 'West Paddock',
+      category: 'trail',
+      description: 'A leisurely afternoon hack through the autumn leaves.',
+      spotsTotal: 10,
     }
     const res = await request(app).post('/api/events').send(payload)
-    expect(res.body.title).toBe('Test Event')
+    expect(res.body.title).toBe('Autumn Hack')
   })
 
   it('returns 400 when required fields are missing', async () => {

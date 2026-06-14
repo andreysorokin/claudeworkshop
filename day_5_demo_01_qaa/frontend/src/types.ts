@@ -1,4 +1,4 @@
-export type EventCategory = 'fundraising' | 'awareness' | 'community' | 'training'
+export type EventCategory = 'show' | 'trail' | 'clinic' | 'grooming'
 
 export interface Event {
   id: number
@@ -12,7 +12,7 @@ export interface Event {
   isActive: boolean
 }
 
-export interface Volunteer {
+export interface StaffMember {
   id: number
   name: string
   email: string
@@ -22,7 +22,7 @@ export interface Volunteer {
   eventsCount: number
 }
 
-export interface CreateVolunteerPayload {
+export interface CreateStaffPayload {
   name: string
   email: string
   role: string

@@ -1,4 +1,4 @@
-# Community Hub Portal
+# Enchanted Stables Portal
 
 @import .claude/code-style.md
 
@@ -11,9 +11,9 @@ Two-app monorepo — run each independently:
 
 ## Domain Model
 
-Two entities managed by the charity's staff portal:
+Two entities managed by the stable's staff portal:
 
-**`Event`** — a charity event with limited spots:
+**`Event`** — a stable event with limited spots:
 
 | Field | Type | Notes |
 |---|---|---|
@@ -21,25 +21,25 @@ Two entities managed by the charity's staff portal:
 | `title` | `string` | Event name |
 | `date` | `string` | ISO 8601 date |
 | `location` | `string` | Venue / URL |
-| `category` | `'fundraising' \| 'awareness' \| 'community' \| 'training'` | |
+| `category` | `'show' \| 'trail' \| 'clinic' \| 'grooming'` | |
 | `description` | `string` | Full description |
 | `spotsTotal` | `number` | Capacity |
 | `spotsRegistered` | `number` | Booked so far |
 | `isActive` | `boolean` | Soft-delete flag |
 
-**`Volunteer`** — a registered volunteer:
+**`StaffMember`** — a stable staff member:
 
 | Field | Type | Notes |
 |---|---|---|
 | `id` | `number` | Auto-assigned |
 | `name` | `string` | Display name |
 | `email` | `string` | Contact email |
-| `role` | `string` | One of `VOLUNTEER_ROLES` |
+| `role` | `string` | One of `STAFF_ROLES` |
 | `joinedAt` | `string` | ISO 8601 date |
 | `isActive` | `boolean` | Soft-delete flag |
 | `eventsCount` | `number` | Events attended |
 
-Seed data: 8 events, 10 volunteers — loaded at startup, reset between tests via `resetStore()`.
+Seed data: 8 events, 10 staff — loaded at startup, reset between tests via `resetStore()`.
 
 ## Running the Project
 
@@ -65,15 +65,16 @@ cd frontend && npm run lint
 
 ```
 backend/
-  src/index.ts             — Express app + server bootstrap (export { app } for tests)
-  src/data.ts              — seed data + mutable store + resetStore()
-  src/routes/events.ts     — /api/events CRUD (has intentional issues — refactor target)
-  src/routes/volunteers.ts — /api/volunteers read-only routes
-  tests/events.test.ts     — route integration tests (Supertest + Vitest)
+  src/index.ts          — Express app + server bootstrap (export { app } for tests)
+  src/data.ts           — seed data + mutable store + resetStore()
+  src/routes/events.ts  — /api/events CRUD (has intentional issues — refactor target)
+  src/routes/staff.ts   — /api/staff CRUD
+  tests/events.test.ts  — route integration tests (Supertest + Vitest)
 
 frontend/
-  src/types.ts                          — Event, Volunteer, payload types
-  src/api/eventsApi.ts                  — fetch wrappers
+  src/types.ts                          — Event, StaffMember, payload types
+  src/api/eventsApi.ts                  — fetch wrappers for events
+  src/api/volunteersApi.ts              — fetch wrappers for staff
   src/hooks/useEvents.ts                — data-fetching hook (has a bug — debugging target)
   src/components/EventCard/             — single-event display (clean)
   src/components/EventList/             — list component (has intentional issues — refactor target)

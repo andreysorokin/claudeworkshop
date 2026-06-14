@@ -5,10 +5,10 @@ interface EventCardProps {
 }
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
-  fundraising: 'Fundraising',
-  awareness:   'Awareness',
-  community:   'Community',
-  training:    'Training',
+  show:     'Show',
+  trail:    'Trail',
+  clinic:   'Clinic',
+  grooming: 'Grooming',
 }
 
 export function EventCard({ event }: EventCardProps) {

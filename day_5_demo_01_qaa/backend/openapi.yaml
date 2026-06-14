@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Community Hub API
+  title: Enchanted Stables API
   version: 1.0.0
-  description: REST API for the Community Hub staff portal
+  description: REST API for the Enchanted Stables staff portal
 
 servers:
   - url: http://localhost:3001
@@ -10,9 +10,9 @@ servers:
 
 tags:
   - name: events
-    description: Charity events management
-  - name: volunteers
-    description: Volunteer management
+    description: Stable events management
+  - name: staff
+    description: Staff member management
   - name: stats
     description: Portal statistics
 
@@ -38,7 +38,7 @@ paths:
     get:
       summary: Get portal statistics
       tags: [stats]
-      description: Returns aggregate counts across all active events and volunteers
+      description: Returns aggregate counts across all active events and staff members
       responses:
         '200':
           description: Statistics retrieved successfully
@@ -142,11 +142,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /api/volunteers/roles:
+  /api/staff/roles:
     get:
-      summary: List available volunteer roles
-      tags: [volunteers]
-      description: Returns the fixed list of roles a volunteer can be assigned
+      summary: List available staff roles
+      tags: [staff]
+      description: Returns the fixed list of roles a staff member can be assigned
       responses:
         '200':
           description: List of role strings
@@ -156,91 +156,91 @@ paths:
                 type: array
                 items:
                   type: string
-                example: [Coordinator, Support, Driver, Medic, Photographer]
+                example: [Stable Manager, Groom, Rider, Farrier, Photographer]
 
-  /api/volunteers:
+  /api/staff:
     get:
-      summary: List active volunteers
-      tags: [volunteers]
-      description: Returns all volunteers with isActive=true
+      summary: List active staff members
+      tags: [staff]
+      description: Returns all staff members with isActive=true
       responses:
         '200':
-          description: List of volunteers
+          description: List of staff members
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Volunteer'
+                  $ref: '#/components/schemas/StaffMember'
 
     post:
-      summary: Register a new volunteer
-      tags: [volunteers]
+      summary: Register a new staff member
+      tags: [staff]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateVolunteerRequest'
+              $ref: '#/components/schemas/CreateStaffRequest'
       responses:
         '201':
-          description: Volunteer registered
+          description: Staff member registered
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Volunteer'
+                $ref: '#/components/schemas/StaffMember'
         '400':
           $ref: '#/components/responses/BadRequest'
 
-  /api/volunteers/{id}:
+  /api/staff/{id}:
     parameters:
       - name: id
         in: path
         required: true
-        description: Numeric volunteer ID
+        description: Numeric staff member ID
         schema:
           type: integer
           minimum: 1
 
     get:
-      summary: Get a single volunteer
-      tags: [volunteers]
+      summary: Get a single staff member
+      tags: [staff]
       responses:
         '200':
-          description: Volunteer found
+          description: Staff member found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Volunteer'
+                $ref: '#/components/schemas/StaffMember'
         '404':
           $ref: '#/components/responses/NotFound'
 
     put:
-      summary: Update a volunteer
-      tags: [volunteers]
+      summary: Update a staff member
+      tags: [staff]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateVolunteerRequest'
+              $ref: '#/components/schemas/UpdateStaffRequest'
       responses:
         '200':
-          description: Volunteer updated
+          description: Staff member updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Volunteer'
+                $ref: '#/components/schemas/StaffMember'
         '404':
           $ref: '#/components/responses/NotFound'
 
     delete:
-      summary: Soft-delete a volunteer
-      tags: [volunteers]
-      description: "Sets isActive to false. The volunteer no longer appears in GET /api/volunteers."
+      summary: Soft-delete a staff member
+      tags: [staff]
+      description: "Sets isActive to false. The member no longer appears in GET /api/staff."
       responses:
         '204':
-          description: Volunteer deleted
+          description: Staff member deleted
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -248,8 +248,8 @@ components:
   schemas:
     EventCategory:
       type: string
-      enum: [fundraising, awareness, community, training]
-      description: Category of a charity event
+      enum: [show, trail, clinic, grooming]
+      description: Category of a stable event
 
     Event:
       type: object
@@ -266,7 +266,7 @@ components:
           description: ISO 8601 date (YYYY-MM-DD)
         location:
           type: string
-          description: Venue name or URL for online events
+          description: Venue name
         category:
           $ref: '#/components/schemas/EventCategory'
         description:
@@ -325,7 +325,7 @@ components:
           type: integer
           minimum: 1
 
-    Volunteer:
+    StaffMember:
       type: object
       required: [id, name, email, role, joinedAt, isActive, eventsCount]
       properties:
@@ -338,7 +338,7 @@ components:
           format: email
         role:
           type: string
-          description: One of the values from GET /api/volunteers/roles
+          description: One of the values from GET /api/staff/roles
         joinedAt:
           type: string
           format: date
@@ -348,7 +348,7 @@ components:
           type: integer
           minimum: 0
 
-    CreateVolunteerRequest:
+    CreateStaffRequest:
       type: object
       required: [name, email, role]
       properties:
@@ -360,10 +360,10 @@ components:
           format: email
         role:
           type: string
-          description: Must match one of the values from GET /api/volunteers/roles
-          enum: [Coordinator, Support, Driver, Medic, Photographer]
+          description: Must match one of the values from GET /api/staff/roles
+          enum: [Stable Manager, Groom, Rider, Farrier, Photographer]
 
-    UpdateVolunteerRequest:
+    UpdateStaffRequest:
       type: object
       description: All fields optional
       properties:
@@ -377,14 +377,14 @@ components:
 
     Stats:
       type: object
-      required: [totalEvents, totalVolunteers, openSpots, filledSpots]
+      required: [totalEvents, totalStaff, openSpots, filledSpots]
       properties:
         totalEvents:
           type: integer
           description: Count of active events
-        totalVolunteers:
+        totalStaff:
           type: integer
-          description: Count of active volunteers
+          description: Count of active staff members
         openSpots:
           type: integer
           description: Total unfilled spots across all active events

@@ -4,147 +4,106 @@
 
 ## The Story
 
-The charity's event API is live. Now build the staff portal that sits in front of it.
-You start with a running backend and a React scaffold — routing wired up, a working `EventList` that already has issues — and spend the day building, refactoring, debugging, and integrating, session by session, in a real browser.
+The Enchanted Stables API is live. Now build the staff portal that sits in front of it — routing wired, events loading, a few bugs hiding in the scaffolding. Spend the day building, refactoring, debugging, and integrating, session by session, in a real browser.
 
 ---
 
-## Setup (before the session)
+## Setup
 
 ```bash
 # Terminal 1 — backend  →  http://localhost:3001
-cd day_4_demo_01_fe_app/backend
-npm install
-npm run dev
+cd day_4_demo_01_fe_app/backend && npm install && npm run dev
 
 # Terminal 2 — frontend  →  http://localhost:5173
-cd day_4_demo_01_fe_app/frontend
-npm install
-npm run dev
+cd day_4_demo_01_fe_app/frontend && npm install && npm run dev
 
 # Verify tests pass
-cd backend  && npm test          # 8 route tests
-cd ../frontend && npm test       # 9 component tests
+cd backend && npm test    # 8 route tests
+cd frontend && npm test   # 9 component tests
 ```
 
-Open `http://localhost:5173`. You'll see the portal with a dark sidebar, three routes (Dashboard, Events, Volunteers), and events listed in the wrong order (that's the debugging exercise later).
+Open `http://localhost:5173`. You'll see the portal with a dark sidebar, three routes (Dashboard, Events, Staff), and events listed in the wrong order — that's the debugging exercise later.
 
 ---
 
-## Repo Tour: Explore Both Apps (30 min)
+## Session 1 — Repo Tour (30 min)
 
 ### 1a. Map the backend
 
-```
-What does this backend do? What routes are available and what does each one return?
-```
+> 💬 Ask: "What does this backend do? What routes are available and what does each one return?"
 
-Claude reads `CLAUDE.md`, then `src/index.ts`, `src/routes/events.ts`, `src/data.ts`.
-It describes the seed data, the soft-delete pattern, and the `// ISSUE` comments in the POST route.
+Claude reads `CLAUDE.md`, then `src/index.ts`, `src/routes/events.ts`, `src/data.ts`. It describes the seed data, the soft-delete pattern, and the `// ISSUE` comments in the POST route.
 
 ### 1b. Map the frontend component tree
 
-```
-Walk me through the frontend. What renders on the screen, what data it loads, and how the components connect.
-```
+> 💬 Ask: "Walk me through the frontend — what renders on screen, what data it loads, how components connect."
 
-Claude traces: `App.tsx` → `BrowserRouter` + `Sidebar` → three page components → `EventList` → `useEvents` → `eventsApi.ts`.
+Claude traces: `App.tsx` → `Sidebar` → three page components → `EventList` → `useEvents` → `eventsApi.ts`.
 
-### 1c. Trace the routing
+### 1c. Ask for critique — no fixes yet
 
-```
-What routes does the app have? What component renders at each one?
-```
-
-Claude reads `App.tsx` and explains the `<Routes>` setup, the `Sidebar` `NavLink` active styling, and the placeholder `VolunteersPage`.
-
-### 1d. Ask for a critique
-
-```
-Review both apps and tell me what quality issues you see. Don't fix anything yet.
-```
+> 💬 Ask: "Review both apps and tell me what quality issues you see. Don't fix anything."
 
 Expected findings:
-- Backend `events.ts`: unsafe body cast, wrong status code on POST, no validation on PUT
+- Backend `events.ts`: unsafe body cast, wrong status on POST, no validation on PUT
 - Frontend `EventList.tsx`: inline styles, `key={index}`, no empty state, doesn't use `EventCard`
 - Frontend `useEvents.ts`: sorts by `spotsRegistered` not `date`
-- Frontend `Dashboard.tsx`: heading hierarchy jumps h1→h3
-- Frontend `EventCard.tsx`, `Sidebar.tsx`: colour-contrast and missing `aria-label` (preview for the a11y session)
+- Frontend `Dashboard.tsx`: heading jumps h1→h3
+- Frontend `EventCard.tsx`, `Sidebar.tsx`: contrast issue and missing `aria-label` (preview for Session 6)
 
-**Teaching point**: Claude reads `CLAUDE.md` first and uses `.claude/code-style.md` as the yardstick — not guesswork.
+**The point:** Claude reads `CLAUDE.md` first and uses `.claude/code-style.md` as the yardstick — not guesswork.
 
 ---
 
-## Write CLAUDE.md: Permanent Context (35 min)
+## Session 2 — Write CLAUDE.md (35 min)
 
-### 2a. Show the scaffold
+Open `CLAUDE.md`. Show the `@import .claude/code-style.md` and the `<!-- TODO -->` sections.
 
-Open `CLAUDE.md`. Point out:
-- `@import .claude/code-style.md` on line 3 — coding standards load every session automatically
-- The `<!-- TODO -->` sections participants will fill in during this step
-
-### 2b. Fill in Key Files and Test Patterns
-
-```
-Explore the project and fill in the Key Files and Test Patterns sections of CLAUDE.md.
-```
+> 💬 Ask: "Explore the project and fill in the Key Files and Test Patterns sections of CLAUDE.md."
 
 Claude scans both apps and writes factual entries.
 
-### 2c. Prove the context loaded
+Then:
 
 ```
 /clear
 ```
 
-Then, without pointing to any file:
+> 💬 Ask: "What test name format does this project use?"
 
-```
-What test name format does this project use?
-```
+Claude reads `CLAUDE.md` → imports `code-style.md` → answers `it('does X when Y')`. From the style guide, not memory.
 
-Claude reads `CLAUDE.md` → `@import .claude/code-style.md` → answers `it('does X when Y')`.
-It learned this from the style guide, not from memory.
-
-**Teaching point**: Write `CLAUDE.md` once. Benefit every session, every team member.
+**The point:** Write `CLAUDE.md` once. Every session, every team member benefits.
 
 ---
 
-## Build a New Feature: VolunteerList (70 min)
+## Session 3 — Build StaffList (70 min)
 
-### 3a. Spec it first
+### 3a. Spec first
 
-```
-I need a VolunteerList component that fetches from GET /api/volunteers and renders
-each volunteer's name, role, and events count. Show me the plan before writing code.
-```
+> 💬 Ask: "I need a StaffList component that fetches from GET /api/staff and renders each member's name, role, and events count. Show me the plan before writing code."
 
 Review the plan. Approve before code is written.
 
 ### 3b. Build end-to-end
 
-```
-Build VolunteerList end-to-end: API wrapper, hook, component, and tests.
-Follow the same patterns as EventList and eventsApi.
-```
+> 💬 Ask: "Build StaffList end-to-end: API wrapper, hook, component, and tests. Follow the same patterns as EventList and eventsApi."
 
 Watch Claude:
-1. Add `fetchVolunteers` (note `src/api/volunteersApi.ts` already exists as a starting point)
-2. Create `src/hooks/useVolunteers.ts`
-3. Create `src/components/VolunteerList/VolunteerList.tsx`
-4. Create `src/components/VolunteerList/VolunteerList.test.tsx`
+1. Add `fetchStaff` to `src/api/volunteersApi.ts`
+2. Create `src/hooks/useStaff.ts`
+3. Create `src/components/StaffList/StaffList.tsx`
+4. Create `src/components/StaffList/StaffList.test.tsx`
 
-The PostToolUse hook runs `npm test` after each test file edit. If a test fails, Claude self-corrects before continuing.
+The PostToolUse hook runs `npm test` after each test file edit. If a test fails, Claude self-corrects.
 
-### 3c. Wire it into VolunteersPage
+### 3c. Wire it in
 
-```
-Replace the placeholder in VolunteersPage.tsx with the new VolunteerList component.
-```
+> 💬 Ask: "Replace the placeholder in VolunteersPage.tsx with the new StaffList component."
 
-Show the result in the browser at `/volunteers`.
+Show the result in the browser at `/staff`.
 
-**Teaching point**: Spec → plan → approve → execute. The hook closes the test-feedback loop without manual test invocations.
+**The point:** Spec → plan → approve → execute. Hooks close the test-feedback loop without manual invocations.
 
 ---
 
@@ -152,90 +111,46 @@ Show the result in the browser at `/volunteers`.
 
 ---
 
-## Component Tests: Generate, Review, Fix (45 min)
+## Session 4 — Component Tests: Generate, Red → Green (45 min)
 
 ### 4a. Generate from an existing example
 
-Point at `EventCard.test.tsx` (5 passing tests):
+Point at `EventCard.test.tsx`:
 
-```
-Using EventCard.test.tsx as the pattern, generate tests for the VolunteerList component.
-Cover: loading state, renders all volunteer names, shows error message, empty-list state.
-```
+> 💬 Ask: "Using EventCard.test.tsx as the pattern, generate tests for StaffList. Cover: loading state, renders all names, shows error, empty-list state."
 
-Review what Claude generates before running. Ask: "Is each test testing behaviour, not implementation?"
+Review before running. Ask: "Is each test checking behaviour, not implementation?"
 
-### 4b. Run and fix
+### 4b. Write a failing test first
 
-The PostToolUse hook fires. If any test fails, Claude explains the failure and fixes it.
+> 💬 Ask: "Before fixing the sort bug in useEvents, write a test that proves the first event returned is the Moonlit Midnight Ride (earliest date) — and confirm it currently fails."
 
-### 4c. Write a failing test first (red → green)
+Show the red output.
 
-```
-Before we fix the sort bug in useEvents, write a test that proves the first event
-returned is the February Gala (earliest date) — and confirm it currently fails.
-```
+> "The failing test is proof of the bug, not just documentation."
 
-Show the red output. Explain: the failing test is *proof of the bug*, not just documentation.
+### 4c. Fix the sort
 
-### 4d. Fix the sort
+> 💬 Ask: "Fix the sort in useEvents so the test passes."
 
-```
-Fix the sort in useEvents so the test passes.
-```
+Claude changes `b.spotsRegistered - a.spotsRegistered` → `a.date.localeCompare(b.date)`. Hook fires. All green. Refresh the browser — events now appear chronologically.
 
-Claude changes `b.spotsRegistered - a.spotsRegistered` → `a.date.localeCompare(b.date)`. Hook fires. All green.
-Refresh the browser — events now appear chronologically.
-
-**Teaching point**: Good test prompts are specific about observable behaviour. "Renders volunteer names" is a test; "calls useVolunteers" is not.
+**The point:** Good test prompts specify observable behaviour. "Renders staff names" is a test; "calls useStaff" is not.
 
 ---
 
-## Refactor and Performance: Fix EventList (40 min)
+## Session 5 — Refactor EventList (40 min)
 
-### 5a. Pull up the Part 1 findings
+> 💬 Ask: "Earlier you found four issues in EventList.tsx. Fix them one at a time. Start with replacing inline rendering with EventCard."
 
-```
-Earlier you found four issues in EventList.tsx. Fix them one at a time.
-Start with replacing the inline rendering with the EventCard component.
-```
+One fix at a time:
+1. Replace `<li>` block with `<EventCard event={event} />` — verify in browser
+2. Replace `key={index}` with `key={event.id}` — explain why before fixing
+3. Add empty-state: "No upcoming events."
+4. Replace inline styles with CSS classes from App.css
+5. Add test: "shows 'No upcoming events.' when list is empty"
 
-### 5b. Replace inline JSX with EventCard
-
-Claude replaces the `<li>` block with `<EventCard event={event} />`. The ESLint hook fires. No new violations.
-
-Verify in the browser — layout now uses the `.event-card` CSS class with hover animation.
-
-### 5c. Fix the key prop
-
-```
-Fix the React key — use event.id instead of the array index.
-```
-
-Explain *why* `key={index}` breaks on reorder/filter before Claude fixes it.
-
-### 5d. Add empty-state handling
-
-```
-Add an empty-state message: when no events are returned,
-show "No upcoming events." instead of a blank list.
-```
-
-### 5e. Remove inline styles
-
-```
-Replace the remaining inline styles in EventList with CSS classes from App.css.
-```
-
-### 5f. Add a test for the new empty state
-
-```
-Add a test: when useEvents returns an empty array, EventList shows "No upcoming events."
-```
-
-All tests pass. Show the final clean `EventList.tsx` side-by-side with the original.
-
-**Teaching point**: Refactor one thing at a time. The hooks make each change immediately verifiable. Each fix can be committed separately.
+**The point:** One change, one commit, one verification. ESLint hook validates inline. Browser confirms rendering.
 
 ---
 
@@ -243,70 +158,47 @@ All tests pass. Show the final clean `EventList.tsx` side-by-side with the origi
 
 ---
 
-## Accessibility and Code Review (35 min)
+## Session 6 — Accessibility Audit (35 min)
 
-### 6a. Full a11y audit
-
-```
-Review this application for accessibility issues. Check: keyboard navigation, ARIA labels,
-heading hierarchy, colour contrast, and semantic HTML. List every issue you find.
-```
+> 💬 Ask: "Review this application for accessibility issues. Check: keyboard navigation, ARIA labels, heading hierarchy, colour contrast, semantic HTML. List every issue."
 
 Expected findings (all planted):
 
 | Location | Issue |
 |---|---|
 | `Sidebar.tsx` | Menu button has no `aria-label` |
-| `EventCard.tsx` | Date/location text uses `--color-text-muted` (#9ca3af) on white — fails WCAG AA |
-| `Dashboard.tsx` | Heading jumps from `<h1>` → `<h3>` — skips `<h2>` |
-| `EventList.tsx` | After refactor: the wrapper `<div>` needs a `role` or be replaced with a semantic element |
+| `EventCard.tsx` | Date/location uses `--color-text-muted` (#9ca3af) on white — WCAG AA fail |
+| `Dashboard.tsx` | Heading jumps h1→h3, skips h2 |
 
-### 6b. Apply the fixes
+> 💬 Ask: "Fix all the accessibility issues you found."
 
-```
-Fix all the accessibility issues you found.
-```
+Review each diff. Tab through the UI with DevTools open — confirm focus ring visible.
 
-Review each diff before accepting. Point out:
-- `aria-label="Toggle sidebar"` added to the button
-- Contrast fix: replace `--color-text-muted` with `--color-text-secondary` in `App.css`
-- Add an `<h2>` between page title and stat cards in Dashboard
-- Use `<ul>`/`<li>` or a `<section>` where appropriate
-
-### 6c. Tab through the UI
-
-With DevTools open, tab through the sidebar and event cards. Confirm focus ring is visible.
-
-**Teaching point**: "Review for a11y issues" is one of the most reliable prompts in the workshop. Claude finds issues faster than manual audit, and every fix is reviewable.
+**The point:** One audit prompt surfaces real issues faster than manual review. Every fix is a reviewable diff.
 
 ---
 
-## Assignment Briefing (20 min)
+## Assignment (20 min)
 
-Participants extend the portal independently using everything from Parts 3–6.
+**Add a Staff Registration form to `/staff`:**
 
-### The task
+1. **Backend** — POST `/api/staff` already exists. Add Zod validation: `name` (min 2 chars), `email` (valid format), `role` (one of `STAFF_ROLES`).
 
-> **Add a Volunteer Registration form to `/volunteers`:**
->
-> 1. **Backend** — the POST route already exists in `volunteersRouter` with basic validation.
->    Add Zod validation: `name` (min 2 chars), `email` (valid format), `role` (one of `VOLUNTEER_ROLES`).
->
-> 2. **Frontend** — add a `VolunteerForm` component above `VolunteerList`:
->    - Controlled form with fields: Name, Email, Role (select populated from `GET /api/volunteers/roles`)
->    - Client-side validation — show inline errors on blur
->    - On valid submit: `POST /api/volunteers`, refresh the list, reset the form
->    - Show a success banner or error message
->
-> 3. **Tests** — write at least 3 component tests:
->    - Form renders with all fields
->    - Shows validation errors for blank/invalid input
->    - Calls the API and resets on valid submit
+2. **Frontend** — add a `StaffForm` component above `StaffList`:
+   - Controlled form: Name, Email, Role (select from `GET /api/staff/roles`)
+   - Client-side validation — inline errors on blur
+   - On valid submit: POST `/api/staff`, refresh list, reset form
+   - Success banner or error message
 
-Suggested opening prompt (share with participants):
+3. **Tests** — at least 3 component tests:
+   - Form renders with all fields
+   - Shows validation errors for blank/invalid input
+   - Calls the API and resets on valid submit
+
+Opening prompt:
 
 ```
-I need to add a volunteer registration form. Start with a plan —
+I need to add a staff registration form. Start with a plan —
 list every file you'll create or modify before touching anything.
 ```
 
@@ -314,50 +206,40 @@ list every file you'll create or modify before touching anything.
 
 ## What This Demo Teaches
 
-| Session | Capability demonstrated |
+| Session | Capability |
 |---|---|
 | Repo tour | Navigate a full-stack app in natural language; identify issues without a brief |
 | CLAUDE.md | Permanent context across both apps; `@import` for shared standards |
-| Build VolunteerList | Spec → hook → component → tests in one flow; PostToolUse closes the feedback loop |
-| Component tests | Generate tests from examples; red → green; distinguishing good test prompts |
-| Refactor EventList | One fix at a time; ESLint hook validates inline; browser confirms rendering |
-| A11y review | Single audit prompt surfaces real issues; every fix is a reviewable diff |
+| Build StaffList | Spec → hook → component → tests; PostToolUse closes the feedback loop |
+| Component tests | Generate from examples; red → green; what makes a good test prompt |
+| Refactor EventList | One fix at a time; ESLint hook validates inline; browser confirms |
+| A11y audit | Single prompt finds planted issues; every fix is a reviewable diff |
 | Assignment | Independent end-to-end practice across both apps |
 
 ---
 
-## Engineering Harness
-
-| Hook | Trigger | Effect |
-|---|---|---|
-| PostToolUse lint | Any edit to `frontend/src/**` | ESLint output lands in Claude's context — violations fixed in the same turn |
-| PostToolUse test | Any edit to `*.test.{ts,tsx}` | `npm test` output shows pass/fail immediately |
-| PostToolUse tsc | Any edit to `backend/src/**` | TypeScript errors surface before the route is called |
-| Deny rule | `dist/**`, `.env*` | Claude cannot write compiled output or secrets files |
-
----
-
-## Resetting After the Demo
+## Reset After Demo
 
 **Frontend** — restore the sort bug in `useEvents.ts`:
+
 ```typescript
-// Restore this line:
 const sorted = [...data].sort((a, b) => b.spotsRegistered - a.spotsRegistered)
 ```
 
-Delete any files created during the session:
-- `src/hooks/useEvents.test.ts` (written during Part 4)
-- `src/components/VolunteerList/` (written during Part 3)
-- Any `VolunteerForm` files from the assignment
+Delete session files:
+- `src/hooks/useEvents.test.ts`
+- `src/components/StaffList/`
+- Any `StaffForm` files from the assignment
 
 Restore `EventList.tsx` to the intentional-issue version (inline styles, `key={index}`, no `EventCard`).
 
-**Backend** — restore intentional issues in `src/routes/events.ts`:
-```typescript
-// Restore in POST handler:
-const { ... } = req.body as Partial<Event>   // unsafe cast
-res.json(newEvent)                           // not res.status(201)
+**Backend** — restore in `src/routes/events.ts`:
 
-// Restore in PUT handler — remove any Zod added during the session
+```typescript
+// POST handler:
+const { ... } = req.body as Partial<Event>   // unsafe cast
+res.json(newEvent)                           // not 201
+
+// PUT handler — remove any Zod added during the session
 store.events[idx] = { ...store.events[idx], ...req.body, id: store.events[idx].id }
 ```

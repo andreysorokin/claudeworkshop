@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 interface Stats {
   totalEvents: number
-  totalVolunteers: number
+  totalStaff: number
   openSpots: number
   filledSpots: number
 }
@@ -22,7 +22,7 @@ export function Dashboard() {
       <div className="page-header">
         {/* ISSUE: h1 jumps directly to h3 inside stat cards — heading hierarchy a11y target */}
         <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Overview of events and volunteers</p>
+        <p className="page-subtitle">Overview of events and stable staff</p>
       </div>
 
       <div className="stats-grid">
@@ -32,8 +32,8 @@ export function Dashboard() {
           <h3 className="stat-label">Total Events</h3>
         </div>
         <div className="stat-card stat-accent-emerald">
-          <div className="stat-value">{stats?.totalVolunteers ?? '—'}</div>
-          <h3 className="stat-label">Volunteers</h3>
+          <div className="stat-value">{stats?.totalStaff ?? '—'}</div>
+          <h3 className="stat-label">Staff Members</h3>
         </div>
         <div className="stat-card stat-accent-amber">
           <div className="stat-value">{stats?.openSpots ?? '—'}</div>

@@ -1,8 +1,8 @@
 {
   "permissions": {
     "deny": [
-      "Edit(src/CharityApi/appsettings.Production.json)",
-      "Write(src/CharityApi/appsettings.Production.json)",
+      "Edit(src/StableApi/appsettings.Production.json)",
+      "Write(src/StableApi/appsettings.Production.json)",
       "Edit(**/*.g.cs)",
       "Write(**/*.g.cs)",
       "Edit(**/bin/**)",
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotnet format src/CharityApi/CharityApi.csproj --verbosity quiet 2>&1 | tail -5 || true"
+            "command": "dotnet format src/StableApi/StableApi.csproj --verbosity quiet 2>&1 | tail -5 || true"
           }
         ]
       },
@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotnet format src/CharityApi/CharityApi.csproj --verbosity quiet 2>&1 | tail -5 || true"
+            "command": "dotnet format src/StableApi/StableApi.csproj --verbosity quiet 2>&1 | tail -5 || true"
           }
         ]
       },
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotnet test tests/CharityApi.Tests/CharityApi.Tests.csproj --verbosity minimal 2>&1 | tail -20"
+            "command": "dotnet test tests/StableApi.Tests/StableApi.Tests.csproj --verbosity minimal 2>&1 | tail -20"
           }
         ]
       },
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotnet test tests/CharityApi.Tests/CharityApi.Tests.csproj --verbosity minimal 2>&1 | tail -20"
+            "command": "dotnet test tests/StableApi.Tests/StableApi.Tests.csproj --verbosity minimal 2>&1 | tail -20"
           }
         ]
       }

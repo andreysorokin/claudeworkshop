@@ -3,16 +3,16 @@ import type { Page, Locator } from '@playwright/test'
 export class VolunteersPage {
   readonly page: Page
   private readonly heading: Locator
-  private readonly volunteerCards: Locator
+  private readonly staffCards: Locator
 
   constructor(page: Page) {
     this.page = page
-    this.heading = page.getByRole('heading', { name: 'Volunteers' })
-    this.volunteerCards = page.locator('.event-card')
+    this.heading = page.getByRole('heading', { name: 'Staff' })
+    this.staffCards = page.locator('.event-card')
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/volunteers')
+    await this.page.goto('/staff')
   }
 
   getHeading(): Locator {
@@ -20,7 +20,7 @@ export class VolunteersPage {
   }
 
   getVolunteerCards(): Locator {
-    return this.volunteerCards
+    return this.staffCards
   }
 
   getVolunteerCardByName(name: string): Locator {

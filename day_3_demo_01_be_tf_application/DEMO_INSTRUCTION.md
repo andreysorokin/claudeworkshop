@@ -4,22 +4,20 @@
 
 ## The Story
 
-You're the first engineer on a charity's donor-registry API. Someone handed you a half-finished codebase, a blank CLAUDE.md, and a list of features to ship. Over the course of the day you'll use Claude Code to understand the code, document it, extend it, clean it up, generate its Azure infrastructure, and chase down a real bug — without ever losing your place.
+You're the first engineer at the Enchanted Stables. Someone handed you a half-finished horse registry API, a blank CLAUDE.md, and a list of features to ship. Over the day you'll understand the code, document it, extend it, debug a real bug, and generate Azure infrastructure — without ever losing your place.
 
-Every session flows from the one before it. By the end, participants will have run the full agentic loop from zero to production-ready.
+Every session flows from the one before it.
 
 ---
 
-## Setup (before the session)
+## Setup
 
 ```bash
 cd day_3_demo_01_be_tf_application
 dotnet build
 dotnet test   # all 9 tests should pass
-dotnet run --project src/CharityApi   # http://localhost:5000/swagger
+dotnet run --project src/StableApi   # http://localhost:5000/swagger
 ```
-
-Open Claude Code in the `day_3_demo_01_be_tf_application` directory.
 
 ---
 
@@ -27,72 +25,57 @@ Open Claude Code in the `day_3_demo_01_be_tf_application` directory.
 
 ### 1a. First impression
 
-Ask Claude:
+> 💬 Ask: "What does this project do? Give me a 2-sentence summary."
 
-```
-What does this project do? Give me a 2-sentence summary.
-```
+Watch Claude read `CLAUDE.md` first (even though it's a stub), then scan the source. It will describe the horse registry and in-memory store.
 
-Watch Claude read `CLAUDE.md` first (even though it's mostly a stub) then scan the source files. It will describe the donor registry and in-memory store.
+**The point:** Claude always loads CLAUDE.md. Even a stub tells it the shape of the project.
 
-> "Claude Code always loads CLAUDE.md automatically. Even an empty scaffold tells Claude the shape of the project."
+### 1b. Explore the layers
 
-### 1b. Explore the architecture
+> 💬 Ask: "Walk me through the layers of this API. What lives in Controllers, Services, and Models?"
 
-```
-Walk me through the layers of this API. What lives in Controllers, Services, and Models and how do they relate?
-```
-
-Claude should describe the thin-controller / service-logic / data-container split.
+Claude describes the thin-controller / service-logic / data-container split.
 
 ### 1c. Trace a call chain
 
-```
-Where is the business logic for creating a donor? Show me the full call path from HTTP request to the in-memory store.
-```
+> 💬 Ask: "Where is the business logic for registering a horse? Show me the full call path from HTTP request to in-memory store."
 
-Point out: Claude navigates by reading key files, not by guessing. Watch it grep or read `DonorsController → IDonorService → DonorService`.
+Watch Claude navigate `HorsesController → IHorseService → HorseService` without being told where to look.
 
-### 1d. Ask for critique — without asking for a fix
+### 1d. Ask for critique — no fixes yet
 
-```
-Review DonorsController and tell me what quality issues you see. Don't change anything yet.
-```
+> 💬 Ask: "Review HorsesController and tell me what quality issues you see. Don't change anything."
 
-Claude will find the three labelled issues (`GetById`, `Create`, `Delete`) and likely the manual validation. This sets up Part 4.
+Claude finds the three labelled issues (`GetById`, `Create`, `Delete`) and the manual validation. This sets up Part 4.
 
-**Teaching point**: Natural-language questions work as well as `cat`. Claude builds a mental model of the codebase across reads so you don't have to feed it file-by-file.
+**The point:** Natural-language questions work as well as `cat`. Claude builds a mental model across reads — you don't feed it files one by one.
 
 ---
 
-## Part 2 — Writing CLAUDE.md: Making the Context Permanent (35 min)
+## Part 2 — Writing CLAUDE.md: Making Context Permanent (35 min)
 
 ### 2a. Show the scaffold
 
 Open `CLAUDE.md`. Point out:
-
-- Line 3: `@import .claude/code-style.md` — the import is already active; coding standards load every session without pasting anything
-- The `<!-- TODO -->` sections — these are what participants will fill in
+- Line 3: `@import .claude/code-style.md` — already active, loads every session
+- The `<!-- TODO -->` sections — what participants fill in
 
 Open `.claude/code-style.md` alongside.
 
-> "The `@import` directive lets you separate concerns. Project-specific rules stay in CLAUDE.md; team-wide coding standards live in code-style.md and are shared across repos."
+> "The `@import` directive separates concerns. Project rules in CLAUDE.md; team coding standards in code-style.md — shared across repos."
 
 ### 2b. Fill in Architecture and Domain Model
 
-```
-Explore the project and fill in the Architecture and Domain Model sections of CLAUDE.md based on what you see.
-```
+> 💬 Ask: "Explore the project and fill in the Architecture and Domain Model sections of CLAUDE.md."
 
-Claude will inspect `Controllers/`, `Services/`, `Models/`, and `Program.cs` then write factual entries. Review the output together — correct anything imprecise.
+Claude inspects `Controllers/`, `Services/`, `Models/`, and `Program.cs`, then writes factual entries. Review together — correct anything imprecise.
 
-### 2c. Document the test patterns
+### 2c. Document test patterns
 
-```
-Read DonorsControllerTests.cs and document the testing patterns we use in the Test Patterns section of CLAUDE.md.
-```
+> 💬 Ask: "Read HorsesControllerTests.cs and document the testing patterns in the Test Patterns section of CLAUDE.md."
 
-Claude should describe the Arrange/Act/Assert convention, Moq usage, and the naming format `MethodName_Scenario_ExpectedBehaviour`.
+Claude describes Arrange/Act/Assert, Moq usage, and the `MethodName_Scenario_ExpectedBehaviour` naming format.
 
 ### 2d. Confirm it loads
 
@@ -100,125 +83,89 @@ Claude should describe the Arrange/Act/Assert convention, Moq usage, and the nam
 /clear
 ```
 
-Then ask without pointing to any file:
+> 💬 Ask: "What HTTP status code should a successful DELETE return according to our code style?"
 
-```
-What HTTP status code should a successful DELETE return according to our code style?
-```
+Claude reads `CLAUDE.md` (which imports `code-style.md`) and answers `204 No Content` — from the style guide, not memory.
 
-Claude reads `CLAUDE.md` (which imports `code-style.md`) and answers `204 No Content` — from the style guide, not from memory.
-
-**Teaching point**: Write CLAUDE.md once. Every future session — and every team member — benefits. This is project infrastructure, not a prompt you paste.
+**The point:** Write CLAUDE.md once. Every future session and every team member benefits.
 
 ---
 
-## Part 3 — Adding a New Endpoint: Spec → Model → Service → Controller → Validation → Tests (70 min)
+## Part 3 — Adding a New Endpoint: Spec → Model → Service → Controller → Tests (70 min)
 
-### 3a. Spec the feature
+### 3a. Plan it first
 
-Ask Claude:
+> 💬 Ask: "I need to add a POST /api/horses/{id}/retire endpoint. The body carries a Reason string. Returns 200 with the updated horse, or 404 if not found. Walk me through the plan before writing any code."
 
-```
-I need to add a POST /api/donors/{id}/deactivate endpoint. The request body carries a Reason string (why the donor is being deactivated). It should return 200 with the updated donor, or 404 if the donor doesn't exist. Walk me through the plan before writing any code.
-```
-
-Review the plan. Correct anything before approving.
+Review the plan. Redirect if needed. Approve.
 
 ### 3b. Add the model
 
-```
-Add a DeactivateRequest record to DonorRequests.cs with a single Reason property.
-```
+> 💬 Ask: "Add a RetireRequest record to HorseRequests.cs with a single Reason property."
 
 ### 3c. Extend the service
 
-```
-Add a Deactivate(int id, DeactivateRequest request) method to IDonorService and implement it in DonorService. Mark the donor inactive and store the reason.
-```
+> 💬 Ask: "Add a Retire(int id, RetireRequest request) method to IHorseService and implement it in HorseService. Mark the horse inactive and store the reason."
 
-Because `Donor` has no `DeactivationReason` yet, Claude will add that property too. Let it — that's the expected flow.
+Claude will add a `RetirementReason` property to `Horse` too — that's the expected flow.
 
 ### 3d. Add the controller action
 
-```
-Add the POST /api/donors/{id}/deactivate action to DonorsController using the new service method.
-```
+> 💬 Ask: "Add the POST /api/horses/{id}/retire action to HorsesController."
 
 ### 3e. Add FluentValidation
 
-FluentValidation is not yet in the project:
+> 💬 Ask: "Add FluentValidation to the project. Create a RetireRequestValidator that requires Reason to be between 5 and 200 characters. Register it in Program.cs."
 
-```
-Add FluentValidation to the project. Create a DeactivateRequestValidator that requires Reason to be between 5 and 200 characters. Register it in Program.cs and wire it into the controller action.
-```
-
-Watch Claude: add the NuGet package to the `.csproj`, create the validator class, register it, and update the action to return 400 on validation failure.
+Watch Claude add the NuGet package, create the validator, register it, and update the action.
 
 ### 3f. Write tests
 
-```
-Add unit tests for the deactivate endpoint to DonorsControllerTests.cs. Cover: valid request returns 200, missing/short reason returns 400, donor not found returns 404.
-```
+> 💬 Ask: "Add unit tests for the retire endpoint to HorsesControllerTests.cs. Cover: valid request returns 200, short reason returns 400, horse not found returns 404."
 
-The PostToolUse hook fires after the test file is saved and runs `dotnet test` automatically. Output appears in Claude's context. If anything fails, Claude self-corrects.
+The PostToolUse hook fires after the test file is saved — `dotnet test` runs automatically. Claude self-corrects if anything fails.
 
-**Teaching point**: The full workflow — model, service, controller, validation, tests — in one scoped session. The hook closes the feedback loop without any manual `dotnet test` invocations.
+**The point:** Full spec-to-test workflow in one session. The hook closes the feedback loop — no manual terminal switching.
 
 ---
 
-## Part 4 — Refactoring: Identify Issues → Plan → Scoped Edits → Verify (45 min)
+## Part 4 — Refactoring: One Issue at a Time (45 min)
 
-### 4a. Pull up the findings from Part 1
+### 4a. Recall the findings
 
-```
-Earlier you identified quality issues in DonorsController. Let's fix them one at a time. Start with GetById returning 200 for a missing donor.
-```
+> 💬 Ask: "Earlier you found quality issues in HorsesController. Fix them one at a time. Start with GetById returning 200 for a missing horse."
 
 ### 4b. Fix: GetById → 404
 
-Claude changes `return Ok(donor)` to a null-check with `return NotFound()`. The formatter hook runs `dotnet format` automatically after the edit.
+Claude adds the null-check and returns `NotFound()`. The format hook fires.
 
-Ask after the fix:
+> 💬 Ask: "Add a test: GetById_NonExistentHorse_ReturnsNotFound"
 
-```
-Add a test: GetById_NonExistentDonor_ReturnsNotFound
-```
-
-The test hook runs. All tests pass.
+Test hook fires. All pass.
 
 ### 4c. Fix: Create → 201 Created
 
-```
-Fix Create to return 201 Created with a Location header pointing to the new donor.
-```
+> 💬 Ask: "Fix Create to return 201 Created with a Location header pointing to the new horse."
 
-Claude changes `return Ok(donor)` to `return CreatedAtAction(nameof(GetById), new { id = donor.Id }, donor)`. Update the matching test expectation to `CreatedAtActionResult`.
+Claude changes to `CreatedAtAction(nameof(GetById), ...)`. Update the test expectation.
 
 ### 4d. Fix: Delete → 204 No Content
 
-```
-Fix Delete to return 204 No Content instead of 200 OK.
-```
+> 💬 Ask: "Fix Delete to return 204 No Content."
 
-Update the test expectation to `NoContentResult`.
+Update the test expectation.
 
-### 4e. Migrate manual validation to FluentValidation
+### 4e. Replace manual validation
 
-```
-The Create action has inline string validation. Replace it with a CreateDonorRequestValidator using FluentValidation — same rules: Name at least 2 characters, Email must contain @.
-```
+> 💬 Ask: "The Create action has inline string validation. Replace it with a CreateHorseRequestValidator using FluentValidation — same rules: Name ≥ 2 characters, OwnerEmail must contain @."
 
-Claude creates the validator, registers it, and strips the manual checks from the controller. Tests pass because the mock service bypasses the validator in unit tests (teach this distinction).
+Claude creates the validator, registers it, strips the manual checks.
 
-### 4f. Reflect
+### 4f. Final review
 
-```
-Review DonorsController again. Is there anything left to improve?
-```
+> 💬 Ask: "Review HorsesController again. Anything left to improve?"
 
-Claude should now report a clean bill of health — or surface something subtle (e.g., no `[ProducesResponseType]` attributes). Discuss whether to fix it.
-
-**Teaching point**: Refactoring with Claude is identify → confirm → change one thing → verify. The hooks make verification free — no context-switching to the terminal.
+**The point:** Identify → confirm → change one thing → verify. Hooks make verification free.
 
 ---
 
@@ -226,123 +173,95 @@ Claude should now report a clean bill of health — or surface something subtle 
 
 ### 5a. Show the requirements comment
 
-Open `infrastructure/main.tf`. The comment block at the top describes what needs to be built:
+Open `infrastructure/main.tf`. The comment block describes what to build:
+- Azure Resource Group, App Service Plan (B1, Linux), .NET 8 Web App
+- SQL Server + Basic database
+- `ASPNETCORE_ENVIRONMENT` app setting
+- Outputs for hostname and SQL FQDN
 
-```
-Azure Resource Group, App Service Plan (B1, Linux), .NET 8 Web App,
-SQL Server + Basic database, ASPNETCORE_ENVIRONMENT app setting, outputs.
-```
+### 5b. Generate
 
-### 5b. Generate the resources
+> 💬 Ask: "Read the requirements comment in infrastructure/main.tf and generate all the Azure resources. Use variables from variables.tf."
 
-```
-Read the requirements comment in infrastructure/main.tf and generate all the Azure resources listed. Use the variables from variables.tf for naming and location.
-```
+Claude writes the resource group, service plan, web app, SQL server, database, and outputs.
 
-Claude writes the resource group, service plan, web app, SQL server, database, app settings, and outputs.
+### 5c. Review and explain
 
-### 5c. Review together
+> 💬 Ask: "Explain the azurerm_linux_web_app block — what does each attribute do?"
 
-Scroll through the generated HCL with the group. Ask Claude to explain each resource block:
+### 5d. Add a staging slot
 
-```
-Explain the azurerm_linux_web_app block — what does each attribute do?
-```
+> 💬 Ask: "Add a staging deployment slot to the web app."
 
-### 5d. Iterate — add a deployment slot
+### 5e. Secure the connection string
 
-```
-Add a staging deployment slot to the web app so we can test before swapping to production.
-```
+> 💬 Ask: "The SQL connection string is a plain app setting. Show me how to reference it from Azure Key Vault instead."
 
-### 5e. Iterate — sensitive config via Key Vault
+Claude introduces `azurerm_key_vault` and a `@Microsoft.KeyVault(...)` reference. Discuss: Claude generates the pattern; the engineer owns the security review.
 
-```
-The SQL connection string is currently a plain app setting. Show me how to reference it from Azure Key Vault instead, so the password never appears in the Terraform state in plaintext.
-```
-
-Claude introduces `azurerm_key_vault` and a `@Microsoft.KeyVault(...)` reference. Discuss: Claude generates the pattern; a human reviews the security implications before `terraform apply`.
-
-**Teaching point**: Generate → review → iterate. Claude produces valid HCL from plain English. The value is the first draft and the explanation; the engineer owns the security review.
+**The point:** Generate → review → iterate. Claude produces valid HCL from plain English. The engineer signs off on security.
 
 ---
 
-## Part 6 — Debugging: Inspect → Hypothesise → Fix (35 min)
+## Part 6 — Debugging: Inspect → Red Test → Fix (35 min)
 
 ### 6a. Surface the complaint
 
-Present the scenario:
+> "Users report that GET /api/horses?page=1&pageSize=2 returns horses 3 and 4 instead of 1 and 2."
 
-> "Users report that GET /api/donors?page=1&pageSize=2 returns donors 3 and 4 instead of donors 1 and 2."
-
-Ask Claude:
-
-```
-We have a pagination bug. GET /api/donors?page=1&pageSize=2 returns the wrong donors — it skips the first two. Help me find it.
-```
+> 💬 Ask: "We have a pagination bug. GET /api/horses?page=1&pageSize=2 returns the wrong horses. Help me find it."
 
 ### 6b. Watch the inspection
 
-Claude will read `DonorsController.GetAll` → trace to `DonorService.GetPaged` → spot the discrepancy: the XML doc comment says "1-based" but the implementation does `Skip(page * pageSize)`, which is 0-based.
+Claude reads `HorsesController.GetAll` → traces to `HorseService.GetPaged` → spots the discrepancy: doc comment says "1-based" but code does `Skip(page * pageSize)` (0-based).
 
 > "This is the inspect phase. Claude found the exact line where the spec and the code disagree."
 
-### 6c. Hypothesise before fixing
+### 6c. Write a failing test first
 
-```
-Before we fix it, write a failing unit test in a new file DonorServiceTests.cs that proves page 1 returns the first two donors and currently fails.
-```
+> 💬 Ask: "Before fixing, write a failing unit test in HorseServiceTests.cs that proves page 1 returns the first two horses and currently fails."
 
-The test hook fires after the file is written. `dotnet test` output shows the new test failing. Show this to the group.
+Hook fires. `dotnet test` shows the new test failing.
 
-> "Red first. The failing test is the proof of the bug. Now we know exactly what 'fixed' means."
+> "Red first. The failing test is the proof of the bug."
 
 ### 6d. Fix
 
-```
-Fix the pagination bug so the test passes.
-```
+> 💬 Ask: "Fix the pagination bug so the test passes."
 
-Claude changes `Skip(page * pageSize)` to `Skip((page - 1) * pageSize)`. Hook fires. All tests pass — including the new one.
+Claude changes `Skip(page * pageSize)` to `Skip((page - 1) * pageSize)`. All tests go green.
 
-### 6e. Reflect on the loop
-
-Draw the loop on a whiteboard or on screen:
+### 6e. The loop
 
 ```
 inspect → hypothesise → red test → fix → green test
 ```
 
-> "The loop is the same whether the bug took 30 seconds to find or 3 hours. The test is the contract. You don't close the loop until it's green."
+**The point:** The loop is the same whether the bug took 30 seconds or 3 hours. You don't close it until it's green.
 
 ---
 
-## Part 7 — Assignment Briefing (20 min)
+## Part 7 — Assignment (20 min)
 
-### The task
-
-Participants extend the API independently using everything from Parts 3–6. No further demo — just the brief.
-
-**Add a `Campaign` entity with full CRUD:**
+**Add a `Race` entity with full CRUD:**
 
 ```
-A Campaign has: Id, Name, Description, StartDate, EndDate, IsActive.
+A Race has: Id, Name, TrackName, StartDate, EndDate, IsActive.
 
-1. Add the model and request DTOs (CreateCampaignRequest, UpdateCampaignRequest)
-2. Add ICampaignService and CampaignService with in-memory storage
-3. Add CampaignsController with GET (all, paged), GET by id, POST, PUT, DELETE
-4. Add FluentValidation: Name required, StartDate must be before EndDate
+1. Model + request DTOs (CreateRaceRequest, UpdateRaceRequest)
+2. IRaceService and RaceService with in-memory storage
+3. RacesController — GET (all, paged), GET by id, POST, PUT, DELETE
+4. FluentValidation: Name required, StartDate must be before EndDate
 5. Unit tests for all controller actions
-6. Add a Terraform resource: Azure Storage Account for campaign asset uploads
+6. Terraform: Azure Storage Account for race photo uploads
 ```
 
-Suggested approach (share with participants):
+Suggested opening prompt:
 
 ```
-I need to add a Campaign entity to this API. Start with a plan — list every file you'll create or modify before touching anything.
+I need to add a Race entity to this API. Start with a plan —
+list every file you'll create or modify before touching anything.
 ```
-
-Then approve the plan and let Claude execute it end-to-end.
 
 ---
 
@@ -350,40 +269,38 @@ Then approve the plan and let Claude execute it end-to-end.
 
 | Session | Capability |
 |---|---|
-| Repo tour | Natural-language codebase exploration without reading every file |
+| Repo tour | Natural-language exploration without reading every file |
 | CLAUDE.md | Permanent layered context; `@import` for modular standards |
-| Add endpoint | Full spec-to-test workflow in a single agentic session |
-| Refactor | Identify → confirm → change one thing → verify with hooks |
-| Terraform | Generate valid HCL from a written requirements description |
-| Debugging | inspect → hypothesise → red test → fix → green loop |
-| Assignment | Independent end-to-end practice across all patterns |
-
-**The pattern**: each session builds on the last. CLAUDE.md written in Part 2 guides the code Claude writes in Part 3. The refactor patterns from Part 4 are the quality bar for the assignment. The debugging loop from Part 6 is usable the next morning on a real bug.
+| Add endpoint | Full spec-to-test workflow in one agentic session |
+| Refactor | One issue at a time, hooks verify each change |
+| Terraform | Valid HCL from a plain-English requirements description |
+| Debugging | inspect → red test → fix → green loop |
+| Assignment | Independent end-to-end practice |
 
 ---
 
-## Resetting After the Demo
+## Reset After Demo
 
-If Claude modified `DonorsController.cs` during Parts 3 or 4, restore the intentional issues:
+Restore intentional issues in `HorsesController.cs`:
 
 ```csharp
-// Restore in GetById — remove the null check, return Ok(donor) unconditionally
-return Ok(donor);
+// GetById — return Ok(horse) unconditionally (remove null check)
+return Ok(horse);
 
-// Restore in Create — return Ok(donor) instead of CreatedAtAction
-return Ok(donor);
+// Create — return Ok(horse) instead of CreatedAtAction
+return Ok(horse);
 
-// Restore in Delete — return Ok() instead of NoContent()
+// Delete — return Ok() instead of NoContent()
 return Ok();
 ```
 
-Delete any files Claude created during Part 3 (`DeactivateRequest` additions, validators, updated tests).
+Delete files created during Part 3 (`RetireRequest`, validators, new tests).
 
-Remove the FluentValidation package from `CharityApi.csproj` if it was added live.
+Remove FluentValidation from `StableApi.csproj` if added live.
 
-Delete `tests/CharityApi.Tests/DonorServiceTests.cs` if written during Part 6.
+Delete `tests/StableApi.Tests/HorseServiceTests.cs` if written during Part 6.
 
-Restore `DonorService.GetPaged` to the buggy version:
+Restore `HorseService.GetPaged` to the buggy version:
 
 ```csharp
 .Skip(page * pageSize)
@@ -394,24 +311,24 @@ Restore `DonorService.GetPaged` to the buggy version:
 ## Files
 
 ```
-DEMO_INSTRUCTION.md                          — this file
-CLAUDE.md                                    — project scaffold (stub, filled in during Part 2)
-.editorconfig                                — formatting rules read by dotnet format
-.claude/settings.json                        — PostToolUse hooks (format + test) + deny rules
-.claude/code-style.md                        — coding standards imported by CLAUDE.md
-CharityApi.sln                               — solution file
-src/CharityApi/Program.cs                    — DI registration, middleware pipeline
-src/CharityApi/CharityApi.csproj             — project file (Swashbuckle only; FluentValidation added in Part 3)
-src/CharityApi/Controllers/DonorsController.cs   — 3 intentional issues (GetById, Create, Delete)
-src/CharityApi/Services/IDonorService.cs     — service contract
-src/CharityApi/Services/DonorService.cs      — in-memory impl; pagination bug in GetPaged
-src/CharityApi/Models/Donor.cs               — domain entity
-src/CharityApi/Models/DonorRequests.cs       — request DTOs
-src/CharityApi/appsettings.json              — base config
-src/CharityApi/appsettings.Development.json  — dev overrides
-src/CharityApi/appsettings.Production.json   — BLOCKED: Claude cannot edit this file
-tests/CharityApi.Tests/CharityApi.Tests.csproj
-tests/CharityApi.Tests/DonorsControllerTests.cs  — 9 passing unit tests (pagination untested — added in Part 6)
-infrastructure/main.tf                       — provider scaffold + requirements comment (resources generated in Part 5)
-infrastructure/variables.tf                  — project_name, location, sql_admin_password
+DEMO_INSTRUCTION.md                         — this file
+CLAUDE.md                                   — project scaffold (stub, filled in during Part 2)
+.editorconfig                               — formatting rules
+.claude/settings.json                       — PostToolUse hooks (format + test) + deny rules
+.claude/code-style.md                       — coding standards imported by CLAUDE.md
+StableApi.sln                               — solution file
+src/StableApi/Program.cs                    — DI registration, middleware pipeline
+src/StableApi/StableApi.csproj              — project file (Swashbuckle; FluentValidation added in Part 3)
+src/StableApi/Controllers/HorsesController.cs   — 3 intentional issues (GetById, Create, Delete)
+src/StableApi/Services/IHorseService.cs     — service contract
+src/StableApi/Services/HorseService.cs      — in-memory impl; pagination bug in GetPaged
+src/StableApi/Models/Horse.cs               — domain entity
+src/StableApi/Models/HorseRequests.cs       — request DTOs
+src/StableApi/appsettings.json              — base config
+src/StableApi/appsettings.Development.json  — dev overrides
+src/StableApi/appsettings.Production.json   — BLOCKED: Claude cannot edit this file
+tests/StableApi.Tests/StableApi.Tests.csproj
+tests/StableApi.Tests/HorsesControllerTests.cs  — 9 passing unit tests
+infrastructure/main.tf                      — provider scaffold + requirements comment
+infrastructure/variables.tf                 — project_name, location, sql_admin_password
 ```

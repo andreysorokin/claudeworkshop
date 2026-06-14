@@ -1,20 +1,20 @@
-export interface Donation {
+export interface Order {
   id: string
   amount: number
-  donorId: string
-  campaignId: string
+  customerId: string
+  collectionId: string
   timestamp: Date
-  giftAidEligible: boolean
+  loyaltyMember: boolean
 }
 
-export interface GiftAidResult {
+export interface LoyaltyResult {
   baseAmount: number
-  giftAidAmount: number
+  loyaltyAmount: number
   total: number
 }
 
 export interface ProcessResult {
   success: boolean
-  donationId: string
+  orderId: string
   error?: string
 }

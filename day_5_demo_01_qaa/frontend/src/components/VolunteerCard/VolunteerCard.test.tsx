@@ -1,26 +1,26 @@
 import { render, screen } from '@testing-library/react'
 import { VolunteerCard } from './VolunteerCard'
-import type { Volunteer } from '../../types'
+import type { StaffMember } from '../../types'
 
-const baseVolunteer: Volunteer = {
+const baseMember: StaffMember = {
   id: 1,
-  name: 'Alice Johnson',
-  email: 'alice@example.com',
-  role: 'Coordinator',
-  joinedAt: '2024-01-15',
+  name: 'Elara Moss',
+  email: 'elara.moss@enchantedstables.com',
+  role: 'Stable Manager',
+  joinedAt: '2023-01-15',
   isActive: true,
-  eventsCount: 5,
+  eventsCount: 8,
 }
 
 describe('VolunteerCard', () => {
-  it('renders the volunteer name and role', () => {
-    render(<VolunteerCard volunteer={baseVolunteer} />)
-    expect(screen.getByText('Alice Johnson')).toBeInTheDocument()
-    expect(screen.getByText('Coordinator')).toBeInTheDocument()
+  it('renders the staff member name and role', () => {
+    render(<VolunteerCard member={baseMember} />)
+    expect(screen.getByText('Elara Moss')).toBeInTheDocument()
+    expect(screen.getByText('Stable Manager')).toBeInTheDocument()
   })
 
   it('renders the events count', () => {
-    render(<VolunteerCard volunteer={baseVolunteer} />)
-    expect(screen.getByText('5 events')).toBeInTheDocument()
+    render(<VolunteerCard member={baseMember} />)
+    expect(screen.getByText('8 events')).toBeInTheDocument()
   })
 })

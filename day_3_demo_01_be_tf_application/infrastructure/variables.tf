@@ -1,7 +1,7 @@
 variable "project_name" {
   type        = string
   description = "Prefix used for all resource names."
-  default     = "charity-api"
+  default     = "stable-api"
 }
 
 variable "location" {

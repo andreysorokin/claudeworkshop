@@ -2,39 +2,39 @@ import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import { VolunteerList } from './VolunteerList'
 import * as useVolunteersModule from '../../hooks/useVolunteers'
-import type { Volunteer } from '../../types'
+import type { StaffMember } from '../../types'
 
 vi.mock('../../hooks/useVolunteers')
 
-const baseVolunteer: Volunteer = {
+const baseMember: StaffMember = {
   id: 1,
-  name: 'Alice Johnson',
-  email: 'alice@example.com',
-  role: 'Coordinator',
-  joinedAt: '2024-01-15',
+  name: 'Elara Moss',
+  email: 'elara.moss@enchantedstables.com',
+  role: 'Stable Manager',
+  joinedAt: '2023-01-15',
   isActive: true,
-  eventsCount: 5,
+  eventsCount: 8,
 }
 
 describe('VolunteerList', () => {
   it('shows a loading indicator while fetching', () => {
     vi.spyOn(useVolunteersModule, 'useVolunteers').mockReturnValue({
-      volunteers: [],
+      staff: [],
       loading: true,
       error: null,
     })
     render(<VolunteerList />)
-    expect(screen.getByText('Loading volunteers...')).toBeInTheDocument()
+    expect(screen.getByText('Loading staff...')).toBeInTheDocument()
   })
 
-  it('renders all volunteer names when loaded', () => {
+  it('renders all staff names when loaded', () => {
     vi.spyOn(useVolunteersModule, 'useVolunteers').mockReturnValue({
-      volunteers: [baseVolunteer, { ...baseVolunteer, id: 2, name: 'Bob Smith' }],
+      staff: [baseMember, { ...baseMember, id: 2, name: 'Finn Archer' }],
       loading: false,
       error: null,
     })
     render(<VolunteerList />)
-    expect(screen.getByText('Alice Johnson')).toBeInTheDocument()
-    expect(screen.getByText('Bob Smith')).toBeInTheDocument()
+    expect(screen.getByText('Elara Moss')).toBeInTheDocument()
+    expect(screen.getByText('Finn Archer')).toBeInTheDocument()
   })
 })

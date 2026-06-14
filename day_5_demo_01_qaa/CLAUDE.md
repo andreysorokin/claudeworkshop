@@ -1,4 +1,4 @@
-# Community Hub Portal — Test Suite
+# Enchanted Stables Portal — Test Suite
 
 @import .claude/code-style.md
 
@@ -11,33 +11,35 @@ Two-app monorepo — run each independently:
 
 ## Domain Model
 
-**`Event`** — a charity event with limited spots:
+**`Event`** — a stable event with limited spots:
 
 | Field | Type | Notes |
 |---|---|---|
 | `id` | `number` | Auto-assigned |
 | `title` | `string` | Event name |
 | `date` | `string` | ISO 8601 date |
-| `location` | `string` | Venue / URL |
-| `category` | `'fundraising' \| 'awareness' \| 'community' \| 'training'` | |
+| `location` | `string` | Venue |
+| `category` | `'show' \| 'trail' \| 'clinic' \| 'grooming'` | |
 | `description` | `string` | Full description |
 | `spotsTotal` | `number` | Capacity |
 | `spotsRegistered` | `number` | Booked so far |
 | `isActive` | `boolean` | Soft-delete flag |
 
-**`Volunteer`** — a registered volunteer:
+**`StaffMember`** — a stable staff member:
 
 | Field | Type | Notes |
 |---|---|---|
 | `id` | `number` | Auto-assigned |
 | `name` | `string` | Display name |
 | `email` | `string` | Contact email |
-| `role` | `string` | One of `VOLUNTEER_ROLES` |
+| `role` | `string` | One of `STAFF_ROLES` |
 | `joinedAt` | `string` | ISO 8601 date |
 | `isActive` | `boolean` | Soft-delete flag |
 | `eventsCount` | `number` | Events attended |
 
-Seed data: 8 events, 10 volunteers — loaded at startup, reset between tests via `resetStore()`.
+`STAFF_ROLES = ['Stable Manager', 'Groom', 'Rider', 'Farrier', 'Photographer']`
+
+Seed data: 8 events, 10 staff — loaded at startup, reset between tests via `resetStore()`.
 
 ## Running the Project
 
@@ -69,22 +71,22 @@ backend/
   src/index.ts             — Express app + Swagger UI at /api-docs
   src/data.ts              — seed data + mutable store + resetStore()
   src/routes/events.ts     — /api/events CRUD with Zod validation
-  src/routes/volunteers.ts — /api/volunteers CRUD
+  src/routes/staff.ts      — /api/staff CRUD
   tests/events.test.ts     — integration tests (Vitest + Supertest) — PARTIAL
   tests/volunteers.test.ts — integration tests — PARTIAL
   tests/fixtures/          — reusable test data (JSON)
 
 frontend/
   playwright.config.ts               — E2E test config
-  src/types.ts                       — Event, Volunteer, payload types
+  src/types.ts                       — Event, StaffMember, payload types
   src/api/eventsApi.ts               — fetch wrappers for events
-  src/api/volunteersApi.ts           — fetch wrappers for volunteers
+  src/api/volunteersApi.ts           — fetch wrappers for staff
   src/hooks/useEvents.ts             — data-fetching hook
   src/hooks/useVolunteers.ts         — data-fetching hook
   src/components/EventCard/          — single-event display
   src/components/EventList/          — event grid
-  src/components/VolunteerCard/      — single-volunteer display
-  src/components/VolunteerList/      — volunteer grid
+  src/components/VolunteerCard/      — single staff member display
+  src/components/VolunteerList/      — staff grid
   src/pages/Dashboard.tsx            — stats overview
   tests/e2e/pages/                   — Playwright page objects
   tests/e2e/events.spec.ts           — E2E tests — PARTIAL
@@ -117,7 +119,7 @@ frontend/
 
 <!-- TODO: Written during session 2 (13:30) -->
 <!-- Cover:
-  - Where fixtures live (backend/tests/fixtures/, frontend co-located baseEvent/baseVolunteer)
+  - Where fixtures live (backend/tests/fixtures/, frontend co-located baseMember/baseEvent)
   - When to use a fixture vs a factory
   - How test.each uses fixture data
   - The resetStore() pattern for backend isolation

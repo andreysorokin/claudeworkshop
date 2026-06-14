@@ -8,7 +8,7 @@ const createEventSchema = z.object({
   title:       z.string().min(1),
   date:        z.string().min(1),
   location:    z.string().min(1),
-  category:    z.enum(['fundraising', 'awareness', 'community', 'training']),
+  category:    z.enum(['show', 'trail', 'clinic', 'grooming']),
   description: z.string().min(1),
   spotsTotal:  z.number().int().positive(),
 })

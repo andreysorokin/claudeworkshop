@@ -5,7 +5,7 @@ export function EventsPage() {
     <div>
       <div className="page-header">
         <h1 className="page-title">Events</h1>
-        <p className="page-subtitle">All upcoming community events</p>
+        <p className="page-subtitle">All upcoming stable events</p>
       </div>
       <EventList />
     </div>

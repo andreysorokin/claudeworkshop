@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 interface Stats {
   totalEvents: number
-  totalVolunteers: number
+  totalStaff: number
   openSpots: number
   filledSpots: number
 }
@@ -21,7 +21,7 @@ export function Dashboard() {
     <div>
       <div className="page-header">
         <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Overview of events and volunteers</p>
+        <p className="page-subtitle">Overview of events and stable staff</p>
       </div>
 
       <div className="stats-grid">
@@ -30,8 +30,8 @@ export function Dashboard() {
           <p className="stat-label">Total Events</p>
         </div>
         <div className="stat-card stat-accent-emerald">
-          <div className="stat-value">{stats?.totalVolunteers ?? '—'}</div>
-          <p className="stat-label">Volunteers</p>
+          <div className="stat-value">{stats?.totalStaff ?? '—'}</div>
+          <p className="stat-label">Staff Members</p>
         </div>
         <div className="stat-card stat-accent-amber">
           <div className="stat-value">{stats?.openSpots ?? '—'}</div>

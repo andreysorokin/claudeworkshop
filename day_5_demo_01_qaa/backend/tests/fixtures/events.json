@@ -1,26 +1,26 @@
 [
   {
-    "title": "Test Fundraiser",
+    "title": "Test Midnight Ride",
     "date": "2025-07-01",
-    "location": "Test Venue, London",
-    "category": "fundraising",
-    "description": "A test fundraising event for automated testing.",
+    "location": "North Paddock, Enchanted Stables",
+    "category": "trail",
+    "description": "A test trail ride for automated testing.",
+    "spotsTotal": 12
+  },
+  {
+    "title": "Test Foal Showcase",
+    "date": "2025-07-15",
+    "location": "Main Arena, Enchanted Stables",
+    "category": "show",
+    "description": "A test show event for automated testing.",
     "spotsTotal": 50
   },
   {
-    "title": "Awareness Campaign",
-    "date": "2025-07-15",
-    "location": "Online — Zoom",
-    "category": "awareness",
-    "description": "An online awareness campaign.",
-    "spotsTotal": 100
-  },
-  {
-    "title": "Community Workshop",
+    "title": "Test Grooming Clinic",
     "date": "2025-08-01",
-    "location": "Community Centre, Manchester",
-    "category": "community",
-    "description": "A community workshop for local residents.",
+    "location": "Stable Block A",
+    "category": "grooming",
+    "description": "A test grooming event for automated testing.",
     "spotsTotal": 25
   }
 ]

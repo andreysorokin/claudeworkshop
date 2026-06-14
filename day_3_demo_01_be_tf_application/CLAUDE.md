@@ -1,4 +1,4 @@
-# Charity Donor Registry API
+# Enchanted Stables Registry API
 
 @import .claude/code-style.md
 
@@ -17,23 +17,23 @@
 dotnet build
 
 # Run the API  (Swagger UI → http://localhost:5000/swagger)
-dotnet run --project src/CharityApi
+dotnet run --project src/StableApi
 
 # Run all tests
 dotnet test
 
 # Format source code
-dotnet format src/CharityApi/CharityApi.csproj
+dotnet format src/StableApi/StableApi.csproj
 ```
 
 ## Solution Structure
 
 ```
-src/CharityApi/        — ASP.NET Web API
+src/StableApi/         — ASP.NET Web API
   Controllers/         — HTTP layer only
   Services/            — Business logic + in-memory store
   Models/              — Domain entities and request DTOs
-tests/CharityApi.Tests/— xunit unit tests (Moq)
+tests/StableApi.Tests/ — xunit unit tests (Moq)
 infrastructure/        — Terraform for Azure deployment
 ```
 

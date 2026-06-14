@@ -21,7 +21,7 @@ export function Sidebar() {
   return (
     <nav className="sidebar">
       <div className="sidebar-logo">
-        <p className="sidebar-logo-title">Community Hub</p>
+        <p className="sidebar-logo-title">Enchanted Stables</p>
         <p className="sidebar-logo-sub">Staff Portal</p>
       </div>
 
@@ -34,9 +34,9 @@ export function Sidebar() {
           <NavIcon path={EVENTS_PATH} />
           Events
         </NavLink>
-        <NavLink to="/volunteers" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+        <NavLink to="/staff" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
           <NavIcon path={PEOPLE_PATH} />
-          Volunteers
+          Staff
         </NavLink>
       </div>
 

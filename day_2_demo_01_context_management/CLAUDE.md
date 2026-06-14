@@ -1,23 +1,23 @@
-# Donation Processor
+# Supply Order Processor
 
 @CLAUDE_CODING_STANDARDS.md
 
 ## Project Purpose
 
-TypeScript library for processing charitable donations, calculating Gift Aid, and generating donor summaries.
+TypeScript library for processing stable supply orders, calculating loyalty bonuses, and generating customer summaries.
 
 ## Domain Rules
 
 - Currency is always **GBP (£)**, two decimal places, no thousand-separators
-- Gift Aid rate is **25%** of the net donation amount (UK basic-rate taxpayer, 2024)
-- Donations must be ≥ **£1.00** to be eligible for Gift Aid
-- Donor must have a signed Gift Aid declaration on file before Gift Aid is claimed
+- Loyalty bonus rate is **10%** of the net order amount for enrolled loyalty members
+- Orders must be ≥ **£5.00** to qualify for a loyalty bonus
+- Customer must have an active loyalty membership before a bonus is applied
 - Refunds are represented as negative amounts — never as a separate data structure
 
 ## Key Files
 
 - `src/types.ts` — all shared TypeScript interfaces; no business logic here
-- `src/processor.ts` — core donation processing functions
+- `src/processor.ts` — core order processing functions
 - `.eslintrc.json` — lint rules enforced automatically via PostToolUse hook on every edit
 - `.claude/commands/` — project slash commands: `/scaffold`, `/audit`
 
@@ -36,18 +36,18 @@ Format: `type(scope): short description`
 
 **Rules:**
 - `type` must be one of: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`
-- `scope` is optional — use the module name when the change is isolated (e.g. `gift-aid`, `processor`, `types`)
+- `scope` is optional — use the module name when the change is isolated (e.g. `loyalty`, `processor`, `types`)
 - Description: **imperative mood**, **lowercase**, **no trailing period**, max 72 characters
 - Body (optional): explain **why**, not what — the diff already shows what changed
 - Footer: `Closes #N` when the commit resolves a tracked issue
 
 **Valid examples:**
 ```
-feat(gift-aid): add multiplier validation for batch donations
-fix(processor): reject negative amounts before Gift Aid calculation
-refactor(types): extract DonorRecord interface from ProcessResult
-test(processor): cover zero-amount edge case in processDonation
-docs: document Gift Aid eligibility rules in CLAUDE.md
+feat(loyalty): add multiplier validation for batch orders
+fix(processor): reject negative amounts before loyalty calculation
+refactor(types): extract CustomerRecord interface from ProcessResult
+test(processor): cover zero-amount edge case in processOrder
+docs: document loyalty eligibility rules in CLAUDE.md
 chore: upgrade eslint-plugin to 7.x
 ```
 
@@ -65,9 +65,9 @@ chore: upgrade eslint-plugin to 7.x
 Pattern: `type/short-description` — same type vocabulary as commits, words separated by hyphens.
 
 ```
-feat/gift-aid-multiplier
+feat/loyalty-multiplier
 fix/negative-amount-rejection
-refactor/donor-types
+refactor/customer-types
 ```
 
 ### PR Descriptions

@@ -1,28 +1,28 @@
-import { Donation, ProcessResult } from './types'
+import { Order, ProcessResult } from './types'
 
-var TAX_RATE = 0.25
+var LOYALTY_RATE = 0.10
 
-export function processDonation(donation: any): ProcessResult {
-  const debugInfo = `Processing donation ${donation.id}`
+export function processOrder(order: any): ProcessResult {
+  const debugInfo = `Processing order ${order.id}`
 
-  if (!donation.amount || donation.amount <= 0) {
-    console.log('Invalid donation amount:', donation.amount)
-    return { success: false, donationId: donation.id ?? '', error: 'Amount must be positive' }
+  if (!order.amount || order.amount <= 0) {
+    console.log('Invalid order amount:', order.amount)
+    return { success: false, orderId: order.id ?? '', error: 'Amount must be positive' }
   }
 
-  if (!donation.donorId) {
-    return { success: false, donationId: donation.id ?? '', error: 'Missing donor ID' }
+  if (!order.customerId) {
+    return { success: false, orderId: order.id ?? '', error: 'Missing customer ID' }
   }
 
-  return { success: true, donationId: donation.id }
+  return { success: true, orderId: order.id }
 }
 
-export function calculateGiftAid(amount: number): number {
-  return amount * TAX_RATE
+export function calculateLoyaltyBonus(amount: number): number {
+  return amount * LOYALTY_RATE
 }
 
-export function formatDonationSummary(donations: Donation[]): string {
-  return donations
-    .map((d) => `£${d.amount.toFixed(2)}`)
+export function formatOrderSummary(orders: Order[]): string {
+  return orders
+    .map((o) => `£${o.amount.toFixed(2)}`)
     .join(', ')
 }
