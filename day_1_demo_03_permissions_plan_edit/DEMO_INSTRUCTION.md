@@ -14,33 +14,33 @@ Three things at once, in one short session:
 
 ## The Documents at a Glance
 
-**`docs/official/onboarding.md`** — locked, 3 approved items:
+**`docs/official/project_plan.md`** — locked, 3 approved items:
 
-| # | Item | Status |
-|---|------|--------|
-| 1 | Set up development environment | Done |
-| 2 | Define API contract | Done |
-| 3 | Launch internal beta | In Progress |
+| #   | Item                           | Status      |
+| --- | ------------------------------ | ----------- |
+| 1   | Set up development environment | Done        |
+| 2   | Define API contract            | Done        |
+| 3   | Launch internal beta           | In Progress |
 
-**`docs/draft/onboarding.md`** — editable, adds 2 proposed items + a Pending Decisions section:
+**`docs/draft/project_plan.md`** — editable, adds 2 proposed items + a Pending Decisions section:
 
-| # | Item | Status |
-|---|------|--------|
-| 4 | User testing round 1 | Proposed |
-| 5 | Performance audit | Proposed |
+| #   | Item                 | Status   |
+| --- | -------------------- | -------- |
+| 4   | User testing round 1 | Proposed |
+| 5   | Performance audit    | Proposed |
 
 ---
 
 ## File Map — What Claude Can and Cannot Do
 
-| File | Read | Edit / Write | Why |
-|------|------|-------------|-----|
-| `CLAUDE.md` | Yes | Yes | No restriction |
-| `DEMO_INSTRUCTION.md` | Yes | Yes | No restriction |
-| `docs/draft/onboarding.md` | Yes | **Yes** | Allowed — this is the working copy |
-| `docs/official/onboarding.md` | Yes | **No** | Write/Edit denied by `.claude/settings.json` |
-| `.env` | **No** | **No** | Read denied — Claude cannot see secrets at all |
-| `.claude/settings.json` | Yes | Yes* | *No deny rule on itself — worth discussing |
+| File                            | Read   | Edit / Write | Why                                            |
+| ------------------------------- | ------ | ------------ | ---------------------------------------------- |
+| `CLAUDE.md`                     | Yes    | Yes          | No restriction                                 |
+| `DEMO_INSTRUCTION.md`           | Yes    | Yes          | No restriction                                 |
+| `docs/draft/project_plan.md`    | Yes    | **Yes**      | Allowed — this is the working copy             |
+| `docs/official/project_plan.md` | Yes    | **No**       | Write/Edit denied by `.claude/settings.json`   |
+| `.env`                          | **No** | **No**       | Read denied — Claude cannot see secrets at all |
+| `.claude/settings.json`         | Yes    | Yes*         | *No deny rule on itself — worth discussing     |
 
 > **Key point:** `docs/official/` is write-protected but still readable. `.env` is read-protected — Claude cannot see the contents at all, so secrets never enter the context window.
 
@@ -68,8 +68,8 @@ Add item 4 (user testing) and item 5 (performance audit) to the project plan,
 and resolve the three pending decisions with reasonable defaults.
 ```
 
-**What happens:** Claude attempts to edit `docs/official/onboarding.md` → permission denied.  
-Claude explains the block and redirects itself to `docs/draft/onboarding.md`.
+**What happens:** Claude attempts to edit `docs/official/project_plan.md` → permission denied.  
+Claude explains the block and redirects itself to `docs/draft/project_plan.md`.
 
 **Stop here.** Point out:
 - The deny rules come from `.claude/settings.json` — open it and show participants.
@@ -92,7 +92,7 @@ Then paste the same prompt as Step 2.
 
 **What happens in Plan mode:**
 - Claude reads all relevant files.
-- It outputs a structured plan: *"I will make the following changes to `docs/draft/onboarding.md`: …"* with each change listed.
+- It outputs a structured plan: *"I will make the following changes to `docs/draft/project_plan.md`: …"* with each change listed.
 - It does **not** touch any file yet.
 - You see a plan, not a diff.
 
@@ -108,7 +108,7 @@ Accept the plan. Claude exits Plan mode automatically and applies every change i
 
 Open the diff and walk through it with participants:
 - Targeted edits only — the Pending Decisions section is resolved and items 4–5 are confirmed.
-- `docs/official/onboarding.md` untouched.
+- `docs/official/project_plan.md` untouched.
 
 ---
 
@@ -131,8 +131,8 @@ Open the diff and walk through it with participants:
 ## Reset Instructions (run between workshop groups)
 
 ```bash
-# Restore docs/draft/onboarding.md to its original state
-git checkout -- docs/draft/onboarding.md
+# Restore docs/draft/project_plan.md to its original state
+git checkout -- docs/draft/project_plan.md
 ```
 
 The official file never changes during the demo, so no reset is needed there.

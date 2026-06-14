@@ -1,4 +1,4 @@
-# Onboarding Plan
+# Project Plan
 
 > **Approved 2026-04-01 | Owner: Project Management Office | Do not edit — raise a change request.**
 

@@ -1,4 +1,4 @@
-# Onboarding Plan [DRAFT]
+# Project Plan [DRAFT]
 
 > **Working copy — pending review. Do not share externally.**
 
@@ -27,4 +27,4 @@
 
 ---
 
-*Version 1.0 (draft) | Last edited: 2026-05-31*
+*Version 1.1 (draft) | Last edited: 2026-05-31*
