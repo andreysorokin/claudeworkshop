@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/CharityApi/CharityApi.csproj" />
+    <ProjectReference Include="../../src/StableApi/StableApi.csproj" />
   </ItemGroup>
 </Project>
