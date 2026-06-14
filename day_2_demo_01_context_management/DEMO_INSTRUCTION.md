@@ -6,7 +6,7 @@
 
 You've been working with Claude on the Enchanted Stables order processor. The session is rich. Now master your context budget, wire in external docs, guarantee code quality automatically, and build your own slash commands.
 
-**Six parts. One continuous session.**
+**Six parts. One continuous session.** (Part 5 covers both commands and skills.)
 
 ---
 
@@ -169,7 +169,9 @@ Watch the sequence:
 
 ---
 
-## Part 5 — Custom Commands: Your Workflow as a Slash Command (5 min)
+## Part 5 — Custom Commands and Skills: Your Workflow as Code (8 min)
+
+### Commands — slash commands for repeatable prompts
 
 Open `.claude/commands/scaffold.md`:
 
@@ -186,15 +188,39 @@ Watch Claude create:
 - `src/loyalty-calculator.test.ts` with stubs for normal, zero, and error cases
 - Hook fires — violations fixed inline
 
-Open `.claude/commands/audit.md`:
+Now run the audit:
 
 ```
 /audit
 ```
 
-Claude scans every file in `src/`, checks against the rule hierarchy, reports violations by file, line, and rule.
+Claude scans every file in `src/`, checks against the rule hierarchy, reports violations by file, line, and rule — including missing test coverage.
 
-**The point:** Any repeatable task — scaffold, audit, standup summary — can be a slash command. Zero code required.
+### Skills — commands with templates and structured knowledge
+
+Open `.claude/skills/adr/`:
+
+> "Skills go one level deeper than commands. They can carry templates, reference files, and multi-step instructions. Same zero-config pickup — a folder in `.claude/skills/`."
+
+Point out two files:
+- `README.md` — the instructions Claude follows (find next number, fill template, save, report)
+- `template.md` — the ADR template Claude fills in
+
+Show the flow end-to-end:
+
+> 💬 Ask: "The audit flagged missing test coverage. Please add it."
+
+Claude picks Vitest (native TypeScript support, no ts-jest needed), installs it, writes tests for all three exported functions — happy path, zero/null, and error cases.
+
+Then invoke the skill:
+
+```
+/adr test framework
+```
+
+Claude reads the existing `docs/decisions/` directory, finds no prior ADRs, picks number `001`, fills the template with real context from `CLAUDE.md` and `tsconfig.json`, and writes `ADR-001-test-framework.md`. No copy-paste. No hallucinated library versions.
+
+**The point:** Commands handle repeatable prompts. Skills handle repeatable *workflows* — multi-step tasks that need templates, numbering, or structured output.
 
 ---
 
@@ -211,13 +237,31 @@ Claude refuses — no type, past tense, too vague — and suggests a corrected m
 
 **The point:** The rule is in CLAUDE.md. Claude saw it at session start. You didn't re-explain it.
 
-Stage something, then:
+### The `/commit` command and split commits
+
+Nothing is staged yet. Run:
 
 ```
-/commit adds loyalty bonus rules and order processor
+/commit
 ```
 
-Claude runs `git diff --cached`, drafts a Conventional Commits message, shows it, waits for approval.
+Claude runs `git diff --cached`. Nothing staged — it reports and stops. It won't invent a commit.
+
+Stage the files and try again:
+
+```
+/commit
+```
+
+Claude drafts a Conventional Commits message, displays it, and **waits for approval before running `git commit`**.
+
+Now demonstrate intent detection — the two new artifacts (tests + ADR) are different concerns:
+
+> 💬 Say: "Split into 2 commits."
+
+Claude stages and commits in sequence:
+1. `test: add vitest and processor test suite` — `package.json`, `package-lock.json`, `tests/`
+2. `docs: record ADR-001 for vitest as test framework` — `docs/`
 
 Then:
 
@@ -238,7 +282,10 @@ Claude runs `git diff HEAD~1..HEAD`, applies the checklist, flags any violations
 | `@`-imports | Modular — project rules vs. team standards |
 | Context7 MCP | Live docs — answers reflect current versions |
 | PostToolUse hooks | Lint/test fires on every edit; Claude self-corrects |
-| Custom commands | Reusable workflows as project slash commands |
+| Custom commands | Repeatable prompts as project slash commands |
+| Skills | Multi-step workflows with templates and structured output |
+| `/commit` | Staged diff → validated Conventional Commits message + approval gate |
+| Split commits | Say "split into 2 commits" — Claude stages and commits in sequence |
 | Git rules in CLAUDE.md | Commit format + diff checklist every session |
 
 **The pattern:** Each layer makes Claude more capable without more prompting. Invest once in config; every session benefits.
@@ -256,22 +303,33 @@ export function processOrder(order: any)        // no-explicit-any
   console.log('Invalid order amount:', ...)    // no-console
 ```
 
-Delete any files created by `/scaffold` or `/audit`.
+Delete files created during the demo:
+
+```bash
+rm -rf tests/ docs/
+git checkout package.json package-lock.json
+```
+
+Delete any files created by `/scaffold`.
 
 ---
 
 ## Files
 
 ```
-DEMO_INSTRUCTION.md              — this file
-CLAUDE.md                        — project rules (loads at session start)
-CLAUDE_CODING_STANDARDS.md       — imported by CLAUDE.md via @-syntax
-src/CLAUDE.md                    — stricter rules, active inside src/
-.mcp.json                        — MCP server config (Context7)
-.claude/settings.json            — PostToolUse lint hook + git permissions
-.claude/commands/scaffold.md     — /scaffold custom command
-.claude/commands/audit.md        — /audit custom command
-.claude/commands/commit.md       — /commit: staged diff → validated commit
-src/processor.ts                 — order processor (4 intentional violations)
-src/types.ts                     — TypeScript interfaces (clean)
+DEMO_INSTRUCTION.md                       — this file
+CLAUDE.md                                 — project rules (loads at session start)
+CLAUDE_CODING_STANDARDS.md                — imported by CLAUDE.md via @-syntax
+src/CLAUDE.md                             — stricter rules, active inside src/
+.mcp.json                                 — MCP server config (Context7)
+.claude/settings.json                     — PostToolUse lint hook + git permissions
+.claude/commands/scaffold.md              — /scaffold custom command
+.claude/commands/audit.md                 — /audit: multi-file rule check
+.claude/commands/commit.md                — /commit: staged diff → validated commit
+.claude/skills/adr/README.md             — /adr skill instructions
+.claude/skills/adr/template.md           — ADR template Claude fills in
+src/processor.ts                          — order processor (4 intentional violations)
+src/types.ts                              — TypeScript interfaces (clean)
+tests/processor.test.ts                   — created during demo (Vitest)
+docs/decisions/ADR-001-test-framework.md  — created during demo
 ```
