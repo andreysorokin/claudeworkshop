@@ -1,4 +1,4 @@
-# Q3 Project Plan [DRAFT]
+# Onboarding Plan [DRAFT]
 
 > **Working copy — pending review. Do not share externally.**
 
