@@ -6,14 +6,25 @@
       "Read(.env)"
     ]
   },
- "hooks": {
+  "hooks": {
     "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx tsx .claude/hooks/docs-draft-only.ts"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "npx tsx .claude/hooks/no-regrets.ts"
+            "command": "npx tsx .claude/hooks/enforce-structure.ts"
           }
         ]
       }
