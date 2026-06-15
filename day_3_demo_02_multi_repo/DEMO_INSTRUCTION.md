@@ -75,7 +75,7 @@ Open `backend/.claude/settings.json`:
 ```json
 {
   "extraKnownMarketplaces": {
-    "org-shared": { "source": { "source": "directory", "path": "../shared" } }
+    "org-shared": { "source": { "source": "directory", "path": "day_3_demo_02_multi_repo/shared" } }
   },
   "enabledPlugins": { "org-standards@org-shared": true }
 }

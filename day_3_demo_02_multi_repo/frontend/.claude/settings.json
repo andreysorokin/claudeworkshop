@@ -3,7 +3,7 @@
     "org-shared": {
       "source": {
         "source": "directory",
-        "path": "../shared"
+        "path": "day_3_demo_02_multi_repo/shared"
       }
     }
   },
