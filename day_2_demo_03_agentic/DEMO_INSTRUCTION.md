@@ -68,6 +68,18 @@ Two permission layers:
 - **`settings.json`** pre-approves `Write(reports/*)` for interactive sessions
 - **`--dangerously-skip-permissions`** bypasses all remaining checks for CI
 
+**`--allowedTools` — whitelist specific tools:**
+
+```bash
+claude -p "Create a README.txt file with a few words about the project" --allowedTools "Read"
+```
+
+Claude has no `Write` tool available, so it stops and reports back:
+
+> _"It seems the write was not approved. Please grant permission to write the file and I'll try again, or let me know if you'd like to adjust the content first."_
+
+> "This is the other end of the spectrum — instead of skipping all checks, you explicitly list what the agent is allowed to do. Useful when you want a sandboxed agent that can read but never modify anything."
+
 **Full pipeline:**
 
 ```bash
