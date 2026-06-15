@@ -18,6 +18,7 @@ npm test   # all tests should pass
 2. **Grep over read** — Claude finds patterns, not full-file reads
 3. **CLAUDE.md hints** — cut search space before grep even runs
 4. **Milestone commits** — every passing state is a rollback point
+5. **LSP vs Grep** — with a language server Claude gets exact type info; without it, grep fills the gap but misses inferred types and narrowed unions
 
 ---
 
@@ -84,10 +85,6 @@ npm test
 
 All tests pass. If any fail, demo the self-correction loop.
 
-### Step 6 — Reflect (3 min)
-
-> "On a 150-file codebase this pattern is identical: CLAUDE.md tells Claude where to look, plan mode reveals the approach, grep finds patterns, small commits keep history clean."
-
 ---
 
 ## The Exact Demo Prompt
@@ -115,29 +112,36 @@ tests/api/checkout.test.ts — sparse tests (extended during demo)
 
 ---
 
-## Bonus: Navigating Without LSP
+## Bonus: LSP vs No-LSP — Side-by-Side Demo
 
-Claude Code CLI has no language server. Navigation is grep:
-
-```bash
-grep -rn "validateBody" src/    # find definition + all call sites
-grep -rn "AppError" src/        # locate custom error class
-find src/api -name "*.ts"       # list files in a layer
-```
-
-Or just ask:
-
-> 💬 Ask: "Where is AppError defined?"
-
-Claude runs grep internally and returns the answer without reading every file.
-
-**The point:** CLAUDE.md hints narrow the search before grep runs. On a 500-file codebase that jump matters.
+This bonus shows the same question answered two ways: once with the
+TypeScript LSP plugin active, once without it. Run both back-to-back
+so attendees feel the difference.
 
 ---
 
-## Bonus: LSP in the CLI
+### Without LSP (enforce with this prompt)
 
-Install once:
+> 💬 Ask (paste verbatim — the constraint is important):
+>
+> ```
+> Do NOT use any LSP tools. Using only grep and file reads, show me
+> all interfaces in this codebase and the type of each property.
+> ```
+
+What Claude does:
+- `grep -rn "^export interface" src/` to find interface declarations
+- Reads each matching file to extract property lines and types
+- **Can** find explicit types like `Order.status: 'pending' | 'confirmed' | 'dispatched' | 'delivered'` — they are written in the source
+- **Can** find `Order.createdAt: Date` — also explicit in the source
+
+Point out: grep + file reads works, but requires opening every file that contains an interface. On a large codebase that's expensive in tokens. LSP answers the same question without reading any files at all.
+
+---
+
+### With LSP (enforce with this prompt)
+
+First, activate the plugin if not already active:
 
 ```bash
 npm install -g typescript-language-server typescript
@@ -147,19 +151,30 @@ Inside a Claude Code session:
 
 ```
 /plugin        # select the TypeScript LSP plugin
-/reload-plugins
 ```
 
-Then:
+> 💬 Ask (paste verbatim):
+>
+> ```
+> Use LSP tools only — no grep, no file reads. Find all interfaces
+> in this codebase and show me the exact type of every property.
+> ```
 
-> 💬 Ask: "Find all usages of the Order interface with LSP."
+What Claude does:
+- `LSP documentSymbol` on each file in parallel — no grep, no reads
+- `LSP hover` on every property to get the compiler-resolved type
+- Returns `Order.status: "pending" | "confirmed" | "dispatched" | "delivered"` and `Order.createdAt: Date` — exact, compiler-verified
 
-Claude calls `LSP › findReferences` in parallel across files — type-resolved, not text-matched.
+Point out: no files were read. The language server answered directly from the type graph.
 
-**Token comparison:**
+---
 
-| Mode | How Claude finds a symbol | Extra tokens |
+### Token comparison
+
+| Mode | How Claude finds a symbol | Approximate extra tokens |
 |---|---|---|
+| LSP available | `documentSymbol` + `hover` — no file reads | ~50–200 |
 | CLI + CLAUDE.md hints | grep output (5–20 lines) | ~200–500 |
-| IDE + LSP | Language server in-process | ~0–50 |
 | CLI, no hints | May read full files | 500–3 000 per file |
+
+**The point:** CLAUDE.md hints narrow the grep search space. LSP eliminates the search entirely. On a 500-file codebase both jumps matter — but they stack.

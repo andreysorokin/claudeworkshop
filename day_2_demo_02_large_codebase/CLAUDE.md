@@ -32,12 +32,19 @@ tests/         — mirrors src/ structure
 
 ## Navigation Rules and LSP
 
-When tracing where a symbol is defined or finding all references to
-it, use LSP (goToDefinition, findReferences, hover) instead of Grep.
-LSP gives exact results; Grep gives text matches.
+When LSP tools are available, prefer them over Grep for all code
+analysis:
 
-Use Grep/Glob for discovery (finding files, searching patterns). Use
-LSP for understanding (definitions, references, type info).
+- Use LSP `goToDefinition` / `findReferences` / `hover` to trace
+  symbols — not Grep. LSP gives type-resolved, exact results; Grep
+  gives text matches that can be wrong or incomplete.
+- Use LSP `documentSymbol` to list all symbols in a file instead of
+  reading the whole file.
+- Use LSP `hover` to get inferred return types and full type
+  signatures, including narrowed unions that are invisible in source.
 
-After locating a file with Grep/Glob, use LSP to navigate within it
-rather than reading the whole file.
+Use Grep/Glob only for file discovery (finding files by name or
+pattern) or when LSP is unavailable.
+
+After locating a file with Grep/Glob, switch to LSP to navigate
+within it rather than reading the whole file.
