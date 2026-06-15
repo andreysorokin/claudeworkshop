@@ -29,7 +29,6 @@ This demo is that pipeline.
 
 1. **Each agent has one job** — scope prevents accidents; composition enables complexity
 2. **Hooks validate every output** — bad files don't propagate downstream
-3. **`-p` + `--dangerously-skip-permissions`** — the CI pattern; no prompts, exit code as signal
 
 ---
 
@@ -74,7 +73,7 @@ Two permission layers:
 ```bash
 rm -f reports/metrics.json reports/metrics-data.md
 
-claude --dangerously-skip-permissions -p \
+claude  -p \
   "Use the analyst agent to analyse src/ and write reports/metrics.json, \
    then use the formatter agent to produce reports/metrics-data.md"
 ```
@@ -82,7 +81,7 @@ claude --dangerously-skip-permissions -p \
 **Formatter only** (metrics.json already exists):
 
 ```bash
-claude --dangerously-skip-permissions -p \
+claude  -p \
   "Use the formatter agent to read reports/metrics.json and produce reports/metrics-data.md"
 ```
 
