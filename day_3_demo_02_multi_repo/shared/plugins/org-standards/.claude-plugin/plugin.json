@@ -1,0 +1,8 @@
+{
+  "name": "org-standards",
+  "version": "1.0.0",
+  "description": "Shared skills, commands and PostToolUse lint/test hooks for all repos in the organisation.",
+  "author": {
+    "name": "Platform Team"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "org-shared": {
+      "source": {
+        "source": "directory",
+        "path": "."
+      }
+    }
+  },
+  "enabledPlugins": {
+    "org-standards@org-shared": true
+  }
+}

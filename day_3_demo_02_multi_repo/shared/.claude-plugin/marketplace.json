@@ -1,0 +1,16 @@
+{
+  "name": "org-shared",
+  "owner": {
+    "name": "Platform Team"
+  },
+  "metadata": {
+    "description": "The organisation's shared Claude Code marketplace. One plugin, consumed by every repo."
+  },
+  "plugins": [
+    {
+      "name": "org-standards",
+      "source": "./plugins/org-standards",
+      "description": "Org engineering standards: skills (code-style, adr, start-branch, spec, implement-spec), a commit command, and PostToolUse lint/test hooks."
+    }
+  ]
+}

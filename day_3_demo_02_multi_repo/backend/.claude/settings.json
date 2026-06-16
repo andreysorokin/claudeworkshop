@@ -1,0 +1,20 @@
+{
+  "extraKnownMarketplaces": {
+    "org-shared": {
+      "source": {
+        "source": "directory",
+        "path": "day_3_demo_02_multi_repo/shared"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "org-standards@org-shared": true
+  },
+  "permissions": {
+    "deny": [
+      "Edit(**/node_modules/**)",
+      "Edit(dist/**)",
+      "Edit(**/.env)"
+    ]
+  }
+}
